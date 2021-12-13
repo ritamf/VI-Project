@@ -5,9 +5,11 @@
 </head>
 
 <body>
-    <select id="country-dropdown" name="locality">
+    <select id="country-dropdown" name="locality" onchange="setSelectedCountry(this)">
     </select>
     <script>
+
+
         let dropdown = document.getElementById('country-dropdown');
         dropdown.length = 0;
 
@@ -38,8 +40,6 @@
                         }
 
                         let setCountries = Array.from(new Set(countries));
-
-                        console.log(setCountries[0]);
 
                         let option;
 

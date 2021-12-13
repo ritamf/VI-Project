@@ -6,6 +6,8 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script>
 
+        // ADD ELEMENTS 
+
         $(function () {
             $("#countriesDropdown").load("countriesDropdown.htm");
         });
@@ -13,6 +15,20 @@
         $(function () {
             $("#continentsDropdown").load("continentsDropdown.htm");
         });
+
+        // INTERACTION
+
+        let selectedCountry = "Portugal"; // TODO: update plot after changing this; fix weird plot
+
+        function setSelectedCountry(dropdown) {
+            selectedCountry = dropdown.options[dropdown.selectedIndex].text;
+            console.log("set " + selectedCountry);
+        }
+
+        function getSelectedCountry(dropdown) {
+            console.log("get " + selectedCountry);
+            return selectedCountry;
+        }
 
         // VISUALIZATION LINE PLOT
 
@@ -22,18 +38,23 @@
 
         function draw(data) {
 
+            let selectedCountry = getSelectedCountry(dropdown);
+
+
             let svg = d3.select('body').append('svg')
                 .attr('width', width)
                 .attr('height', height);
 
+            data = data.filter(d => d.country==selectedCountry)
+
             // The scale does not have extent, as it need all the values
-            let x_extent = data.map(d => d.country);
+            let x_extent = data.map(d => d.year_week);
             let x_scale = d3.scalePoint()
                 .range([margin, width - margin])
                 .domain(x_extent);
 
             // returns a two-size array with min and max values of y from data
-            let y_extent = d3.extent(data, d => d.population);
+            let y_extent = d3.extent(data, d => d.cumulative_count);
             let y_scale = d3.scaleLinear()
                 .range([height - margin, margin])
                 .domain([0, y_extent[1]]); // adding 0 to let all points have the same base
@@ -41,8 +62,8 @@
             let circles = svg.selectAll("circle")
                 .data(data)
                 .join("circle")
-                .attr("cx", (d, i) => x_scale(d.country))
-                .attr("cy", d => y_scale(d.population))
+                .attr("cx", (d, i) => x_scale(d.year_week))
+                .attr("cy", d => y_scale(d.cumulative_count))
                 .attr("r", 1);
 
             let x_axis = d3.axisBottom(x_scale);
@@ -61,8 +82,8 @@
 
 
             let line = d3.line()
-                .x((d, i) => x_scale(d.country))
-                .y(d => y_scale(d.population));
+                .x((d, i) => x_scale(d.year_week))
+                .y(d => y_scale(d.cumulative_count));
 
             d3.select("svg")
                 .append("path")
@@ -101,7 +122,7 @@
         }
 
         path.linha {
-            stroke: DeepPink;
+            stroke: red;
         }
     </style>
 </head>
