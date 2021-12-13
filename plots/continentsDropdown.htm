@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+</head>
+
+<body>
+    <select id="continents-dropdown" name="locality">
+    </select>
+    <script>
+        let dropdownContinents = document.getElementById('continents-dropdown');
+        dropdownContinents.length = 0;
+
+        let defaultOptionContinents = document.createElement('option');
+        defaultOptionContinents.text = 'Choose Continent';
+
+        dropdownContinents.add(defaultOptionContinents);
+        dropdownContinents.selectedIndex = 0;
+
+        const urlCont = '../datasets/cases_deaths/cases_deaths.json';
+
+        fetch(url)
+            .then(
+                function (response) {
+                    if (response.status !== 200) {
+                        console.warn('Looks like there was a problem. Status Code: ' +
+                            response.status);
+                        return;
+                    }
+
+                    // Examine the text in the response  
+                    response.json().then(function (data) {
+
+                        let continentsList = [];
+
+                        for (let i = 0; i < data.length; i++) {
+                            continentsList.push(data[i].country);
+                        }
+
+                        let setContinents = Array.from(new Set(continentsList));
+
+                        console.log("yo" + setContinents[0]);
+
+                        let option;
+
+                        for (let i = 0; i < setContinents.length; i++) {
+                            if (setContinents[i].includes("(total)")) {
+                                option = document.createElement('option');
+                                option.text = setContinents[i];
+                                option.value = setContinents[i];
+                                dropdownContinents.add(option);
+                            }
+                        }
+
+                    });
+                }
+            )
+            .catch(function (err) {
+                console.error('Fetch Error -', err);
+            });
+    </script>
+</body>
+
+</html>

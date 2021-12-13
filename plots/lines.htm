@@ -7,7 +7,11 @@
     <script>
 
         $(function () {
-            $("#countriesDropdown").load("dropdown.htm");
+            $("#countriesDropdown").load("countriesDropdown.htm");
+        });
+
+        $(function () {
+            $("#continentsDropdown").load("continentsDropdown.htm");
         });
 
         // VISUALIZATION LINE PLOT
@@ -105,6 +109,7 @@
 <body>
     <h3>Note: Run this with a server</h3>
     <div id="countriesDropdown"></div>
+    <div id="continentsDropdown"></div>
     <script>
         d3.json("../datasets/cases_deaths/cases_deaths.json")
             .then(draw)
