@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+</head>
+
+<body>
+    <select id="locality-dropdown" name="locality">
+    </select>
+    <script>
+        let dropdown = document.getElementById('locality-dropdown');
+        dropdown.length = 0;
+
+        let defaultOption = document.createElement('option');
+        defaultOption.text = 'Choose Country';
+
+        dropdown.add(defaultOption);
+        dropdown.selectedIndex = 0;
+
+        const url = '../datasets/cases_deaths/cases_deaths.json';
+
+        fetch(url)
+            .then(
+                function (response) {
+                    if (response.status !== 200) {
+                        console.warn('Looks like there was a problem. Status Code: ' +
+                            response.status);
+                        return;
+                    }
+
+                    // Examine the text in the response  
+                    response.json().then(function (data) {
+
+                        let countries = [];
+
+                        for (let i = 0; i < data.length; i++) {
+                            countries.push(data[i].country);
+                        }
+
+                        let setCountries = Array.from(new Set(countries));
+
+                        console.log(setCountries[0]);
+
+                        let option;
+
+                        for (let i = 0; i < setCountries.length; i++) {
+                            if (!setCountries[i].includes("(total)")) {
+                                option = document.createElement('option');
+                                option.text = setCountries[i];
+                                option.value = setCountries[i];
+                                dropdown.add(option);
+                            }
+                        }
+
+                    });
+                }
+            )
+            .catch(function (err) {
+                console.error('Fetch Error -', err);
+            });
+    </script>
+</body>
+
+</html>
