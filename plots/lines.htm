@@ -2,8 +2,15 @@
 
 <head>
     <title>Lines</title>
-    <script src="http://d3js.org/d3.v6.js"></script>
+    <!--Bootstrap-->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    <!--D3js-->
+    <script src="http://d3js.org/d3.v6.js"></script>
+
     <script>
 
         // ADD ELEMENTS 
@@ -71,12 +78,19 @@
             let selectedIndicator = getSelectedIndicator(dropdown);
 
 
-
             let svg = d3.select('body').append('svg')
                 .attr('width', width)
                 .attr('height', height);
 
-            data = data.filter(d => d.country==selectedCountry && d.indicator=="deaths"); // TODO: update plot after filtering info
+            svg.append("text")
+                .attr("x", width / 2)
+                .attr("y", margin * 3/4)
+                .attr("text-anchor", "middle")
+                .style("font-size", "16px")
+                .style("text-decoration", "underline")
+                .text("Number of " + selectedIndicator + " in " + selectedCountry);
+
+            data = data.filter(d => d.country == selectedCountry && d.indicator == selectedIndicator); // TODO: update plot after filtering info
 
             // The scale does not have extent, as it need all the values
             let x_extent = data.map(d => d.year_week);
@@ -159,8 +173,7 @@
 </head>
 
 <body>
-    <h3>Note: Run this with a server</h3>
-    <div id="countriesDropdown"></div>
+    <div class="btn-group" id="countriesDropdown"></div>
     <div id="continentsDropdown"></div>
     <div id="indicatorDropdown"></div>
     <script>

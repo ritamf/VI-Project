@@ -12,12 +12,6 @@
         let dropdownIndicator = document.getElementById('country-dropdownIndicator');
         dropdownIndicator.length = 0;
 
-        let defaultOptionIndicator = document.createElement('option');
-        defaultOptionIndicator.text = 'Choose Indicator';
-
-        dropdownIndicator.add(defaultOptionIndicator);
-        dropdownIndicator.selectedIndex = 0;
-
         const urlIndicator = '../datasets/cases_deaths/cases_deaths.json';
 
         fetch(urlIndicator)
