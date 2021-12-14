@@ -40,7 +40,7 @@
             console.log("set " + selectedCountry);
         }
 
-        function getSelectedCountry(dropdown) {
+        function getSelectedCountry() {
             console.log("get " + selectedCountry);
             return selectedCountry;
         }
@@ -50,7 +50,7 @@
             console.log("set " + selectedContinent);
         }
 
-        function getSelectedContinent(dropdown) {
+        function getSelectedContinent() {
             console.log("get " + selectedContinent);
             return selectedContinent;
         }
@@ -60,7 +60,7 @@
             console.log("set " + selectedIndicator);
         }
 
-        function getSelectedIndicator(dropdown) {
+        function getSelectedIndicator() {
             console.log("get " + selectedIndicator);
             return selectedIndicator;
         }
@@ -73,9 +73,9 @@
 
         function draw(data) {
 
-            let selectedCountry = getSelectedCountry(dropdown);
-            let selectedContinent = getSelectedContinent(dropdown);
-            let selectedIndicator = getSelectedIndicator(dropdown);
+            let selectedCountry = getSelectedCountry();
+            let selectedContinent = getSelectedContinent();
+            let selectedIndicator = getSelectedIndicator();
 
 
             let svg = d3.select('body').append('svg')
@@ -173,7 +173,11 @@
 </head>
 
 <body>
-    <div class="btn-group" id="countriesDropdown"></div>
+    <nav class="navbar navbar-dark bg-dark">
+        <span class="navbar-brand mb-0 h1">Covid Data Visualization</span>
+      </nav>
+    <!--TODO: add carousell of plot options-->
+    <div id="countriesDropdown"></div>
     <div id="continentsDropdown"></div>
     <div id="indicatorDropdown"></div>
     <script>
