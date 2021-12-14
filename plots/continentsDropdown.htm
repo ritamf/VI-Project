@@ -5,7 +5,7 @@
 </head>
 
 <body>
-    <select id="continents-dropdown" name="locality">
+    <select id="continents-dropdown" name="locality" onchange="setSelectedContinent(this)">
     </select>
     <script>
         let dropdownContinents = document.getElementById('continents-dropdown');
@@ -19,7 +19,7 @@
 
         const urlCont = '../datasets/cases_deaths/cases_deaths.json';
 
-        fetch(url)
+        fetch(urlCont)
             .then(
                 function (response) {
                     if (response.status !== 200) {

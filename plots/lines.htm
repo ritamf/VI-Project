@@ -16,9 +16,17 @@
             $("#continentsDropdown").load("continentsDropdown.htm");
         });
 
+        $(function () {
+            $("#indicatorDropdown").load("indicatorDropdown.htm");
+        });
+
         // INTERACTION
 
-        let selectedCountry = "Portugal"; // TODO: update plot after changing this; fix weird plot
+        let selectedCountry = "Portugal"; // getSelectedCountry(dropdown);
+        let selectedContinent = "Choose Continent";// getSelectedContinent(dropdown);
+        let selectedIndicator = "cases"; // getSelectedIndicator(dropdown);
+
+
 
         function setSelectedCountry(dropdown) {
             selectedCountry = dropdown.options[dropdown.selectedIndex].text;
@@ -30,6 +38,26 @@
             return selectedCountry;
         }
 
+        function setSelectedContinent(dropdown) {
+            selectedContinent = dropdown.options[dropdown.selectedIndex].text;
+            console.log("set " + selectedContinent);
+        }
+
+        function getSelectedContinent(dropdown) {
+            console.log("get " + selectedContinent);
+            return selectedContinent;
+        }
+
+        function setSelectedIndicator(dropdown) {
+            selectedIndicator = dropdown.options[dropdown.selectedIndex].text;
+            console.log("set " + selectedIndicator);
+        }
+
+        function getSelectedIndicator(dropdown) {
+            console.log("get " + selectedIndicator);
+            return selectedIndicator;
+        }
+
         // VISUALIZATION LINE PLOT
 
         let width = 500;
@@ -39,13 +67,16 @@
         function draw(data) {
 
             let selectedCountry = getSelectedCountry(dropdown);
+            let selectedContinent = getSelectedContinent(dropdown);
+            let selectedIndicator = getSelectedIndicator(dropdown);
+
 
 
             let svg = d3.select('body').append('svg')
                 .attr('width', width)
                 .attr('height', height);
 
-            data = data.filter(d => d.country==selectedCountry)
+            data = data.filter(d => d.country==selectedCountry && d.indicator=="deaths"); // TODO: update plot after filtering info
 
             // The scale does not have extent, as it need all the values
             let x_extent = data.map(d => d.year_week);
@@ -131,6 +162,7 @@
     <h3>Note: Run this with a server</h3>
     <div id="countriesDropdown"></div>
     <div id="continentsDropdown"></div>
+    <div id="indicatorDropdown"></div>
     <script>
         d3.json("../datasets/cases_deaths/cases_deaths.json")
             .then(draw)
