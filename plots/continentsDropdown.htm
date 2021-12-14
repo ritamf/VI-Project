@@ -12,7 +12,7 @@
         dropdownContinents.length = 0;
 
         let defaultOptionContinents = document.createElement('option');
-        defaultOptionContinents.text = 'Choose Continent (total)';
+        defaultOptionContinents.text = 'Choose Country (total)';
 
         dropdownContinents.add(defaultOptionContinents);
         dropdownContinents.selectedIndex = 0;
@@ -45,7 +45,7 @@
                             if (setContinents[i].includes("(total)")) {
                                 option = document.createElement('option');
                                 option.text = setContinents[i];
-                                option.value = setContinents[i];
+                                option.value = option.text;
                                 dropdownContinents.add(option);
                             }
                         }
