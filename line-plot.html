@@ -1,47 +1,234 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="utf-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
-        <meta name="description" content="" />
-        <meta name="author" content="" />
-        <title>VI Project - Visualize Covid Data</title>
-        <!-- Favicon-->
-        <link rel="icon" type="image/x-icon" href="assets/covid.ico" />
-        <!-- Core theme CSS (includes Bootstrap)-->
-        <link href="css/styles.css" rel="stylesheet" />
-    </head>
-    <body class="d-flex flex-column min-vh-100">
 
-        <!-- Responsive navbar-->
-        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-            <div class="container px-5">
-                <a class="navbar-brand" href="index.html"> <img src="assets/covid.ico" width="25" height="25" alt=""> VI Project - Visualize Covid Data</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
-                <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                    <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
-                        <li class="nav-item"><a class="nav-link" aria-current="" href="index.html">Home</a></li>
-                        <li class="nav-item"><a class="nav-link active" aria-current="" href="line-plot.html">Line Plot</a></li>
-                        <li class="nav-item"><a class="nav-link" aria-current="" href="bar-plot.html">Bar Plot</a></li>
-                        <li class="nav-item"><a class="nav-link" aria-current="" href="about.html">About</a></li>
-                    </ul>
-                </div>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <meta name="description" content="" />
+    <meta name="author" content="" />
+    <title>VI Project - Visualize Covid Data</title>
+
+    <link rel="icon" type="image/x-icon" href="assets/covid.ico" /> <!-- Favicon-->
+    <link href="css/styles.css" rel="stylesheet"> <!-- Core theme CSS (includes Bootstrap) -->
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script> <!--jQuery-->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script> <!--popper-->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script> <!--Bootstrap core JS-->
+    <script src="http://d3js.org/d3.v6.js"></script> <!--D3js-->
+
+    <script src="js/scripts.js"></script> <!--Core theme JS-->
+
+    <script>
+
+        // ADD ELEMENTS 
+
+        $(function () {
+            $("#countriesDropdown").load("plots/countriesDropdown.htm");
+        });
+
+        $(function () {
+            $("#continentsDropdown").load("plots/continentsDropdown.htm");
+        });
+
+        $(function () {
+            $("#indicatorDropdown").load("plots/indicatorDropdown.htm");
+        });
+
+        // INTERACTION
+
+        let selectedCountry = "Portugal"; // getSelectedCountry(dropdown);
+        let selectedContinent = "Choose Continent";// getSelectedContinent(dropdown);
+        let selectedIndicator = "cases"; // getSelectedIndicator(dropdown);
+
+
+
+        function setSelectedCountry(dropdown) {
+            selectedCountry = dropdown.options[dropdown.selectedIndex].text;
+            console.log("set " + selectedCountry);
+        }
+
+        function getSelectedCountry() {
+            console.log("get " + selectedCountry);
+            return selectedCountry;
+        }
+
+        function setSelectedContinent(dropdown) {
+            selectedContinent = dropdown.options[dropdown.selectedIndex].text;
+            console.log("set " + selectedContinent);
+        }
+
+        function getSelectedContinent() {
+            console.log("get " + selectedContinent);
+            return selectedContinent;
+        }
+
+        function setSelectedIndicator(dropdown) {
+            selectedIndicator = dropdown.options[dropdown.selectedIndex].text;
+            console.log("set " + selectedIndicator);
+        }
+
+        function getSelectedIndicator() {
+            console.log("get " + selectedIndicator);
+            return selectedIndicator;
+        }
+
+        // VISUALIZATION LINE PLOT
+
+        let width = 500;
+        let height = 300;
+        let margin = 75;
+
+        function draw(data) {
+
+            let selectedCountry = getSelectedCountry();
+            let selectedContinent = getSelectedContinent();
+            let selectedIndicator = getSelectedIndicator();
+
+
+            let svg = d3.select('body').append('svg')
+                .attr('width', width)
+                .attr('height', height);
+
+            svg.append("text")
+                .attr("x", width / 2)
+                .attr("y", margin * 3 / 4)
+                .attr("text-anchor", "middle")
+                .style("font-size", "16px")
+                .style("text-decoration", "underline")
+                .text("Number of " + selectedIndicator + " in " + selectedCountry);
+
+            data = data.filter(d => d.country == selectedCountry && d.indicator == selectedIndicator); // TODO: update plot after filtering info
+
+            // The scale does not have extent, as it need all the values
+            let x_extent = data.map(d => d.year_week);
+            let x_scale = d3.scalePoint()
+                .range([margin, width - margin])
+                .domain(x_extent);
+
+            // returns a two-size array with min and max values of y from data
+            let y_extent = d3.extent(data, d => d.cumulative_count);
+            let y_scale = d3.scaleLinear()
+                .range([height - margin, margin])
+                .domain([0, y_extent[1]]); // adding 0 to let all points have the same base
+
+            let circles = svg.selectAll("circle")
+                .data(data)
+                .join("circle")
+                .attr("cx", (d, i) => x_scale(d.year_week))
+                .attr("cy", d => y_scale(d.cumulative_count))
+                .attr("r", 1);
+
+            let x_axis = d3.axisBottom(x_scale);
+            d3.select("svg")
+                .append("g")
+                .attr("class", "x axis")
+                .attr("transform", "translate(0," + (height - margin) + ")")
+                .call(x_axis);
+
+            let y_axis = d3.axisLeft(y_scale);
+            d3.select("svg")
+                .append("g")
+                .attr("class", "y axis")
+                .attr("transform", "translate(" + (margin) + ", 0" + ")")
+                .call(y_axis);
+
+
+            let line = d3.line()
+                .x((d, i) => x_scale(d.year_week))
+                .y(d => y_scale(d.cumulative_count));
+
+            d3.select("svg")
+                .append("path")
+                .attr("d", line(data))
+                .attr("class", "linha");
+        }
+
+        d3.json("datasets/cases_deaths/cases_deaths.json")
+            .then(draw)
+            .catch(function (err) { console.log(err) });
+    </script>
+
+    <style>
+        .axis path {
+            fill: none;
+            stroke: black;
+        }
+
+        .axis {
+            font-size: 8pt;
+            font-family: sans-serif;
+        }
+
+        .tick {
+            fill: none;
+            stroke: black;
+        }
+
+        circle {
+            stroke: black;
+            stroke-width: 0.5px;
+            fill: RoyalBlue;
+            opacity: 0.6;
+        }
+
+        path {
+            fill: none;
+            stroke: black;
+            stroke-width: 2px;
+        }
+
+        path.linha {
+            stroke: red;
+        }
+    </style>
+</head>
+
+<body class="d-flex flex-column min-vh-100">
+
+    <!-- Responsive navbar-->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container px-5">
+            <a class="navbar-brand" href="index.html"> <img src="assets/covid.ico" width="25" height="25" alt=""> VI
+                Project - Visualize Covid Data</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
+                aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                    <li class="nav-item"><a class="nav-link" aria-current="" href="index.html">Home</a></li>
+                    <li class="nav-item"><a class="nav-link active" aria-current="" href="line-plot.html">Line Plot</a>
+                    </li>
+                    <li class="nav-item"><a class="nav-link" aria-current="" href="bar-plot.html">Bar Plot</a></li>
+                    <li class="nav-item"><a class="nav-link" aria-current="" href="about.html">About</a></li>
+                </ul>
             </div>
-        </nav>
-
-        <!-- Page Content-->
-        <div class="container-fluid my-5">
-            <h1>Line Plot</h1>
         </div>
+    </nav>
 
-        <!-- Footer-->
-        <div class="wrapper flex-grow-1"></div>
-        <footer class="py-5 bg-dark">
-            <div class="container px-4 px-lg-5"><p class="m-0 text-center text-white">Copyright &copy; VI Project - Visualize Covid Data 2021/2022</p></div>
-        </footer>
-        <!-- Bootstrap core JS-->
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
-        <!-- Core theme JS-->
-        <script src="js/scripts.js"></script>
-    </body>
+    <!-- Page Content (mostly D3js content) -->
+    <div class="container-fluid my-5">
+        <h1>Line Plot</h1>
+
+        <div id="countriesDropdown"></div>
+        <div id="continentsDropdown"></div>
+        <div id="indicatorDropdown"></div>
+
+    </div>
+
+
+    <!-- Footer-->
+    <div class="wrapper flex-grow-1"></div>
+    <footer class="py-5 bg-dark">
+        <div class="container px-4 px-lg-5">
+            <p class="m-0 text-center text-white">Copyright &copy; VI Project - Visualize Covid Data 2021/2022</p>
+        </div>
+    </footer>
+
+
+    <script>
+
+    </script>
+
+</body>
+
 </html>
