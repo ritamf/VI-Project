@@ -1,4 +1,3 @@
-
 // ADD ELEMENTS 
 
 $(function () {
@@ -15,7 +14,7 @@ $(function () {
 
 // INTERACTION
 
-let selectedCountry = "Portugal"; // getSelectedCountry(dropdown);
+let selectedCountry = "China"; // getSelectedCountry(dropdown);
 let selectedContinent = "Choose Continent";// getSelectedContinent(dropdown);
 let selectedIndicator = "cases"; // getSelectedIndicator(dropdown);
 
@@ -53,8 +52,8 @@ function getSelectedIndicator() {
 
 // VISUALIZATION LINE PLOT
 
-let width = 1000;
-let height = 300;
+let width = 1300;
+let height = 400;
 let margin = 75;
 
 function draw(data) {
@@ -63,12 +62,11 @@ function draw(data) {
     let selectedContinent = getSelectedContinent();
     let selectedIndicator = getSelectedIndicator();
 
-
     let svg = d3.select('.div-line-plot').append('svg')
         .attr('width', width)
         .attr('height', height);
 
-    svg.append("text")
+    svg.append("text") // title of plot is added here
         .attr("x", width / 2)
         .attr("y", margin * 3 / 4)
         .attr("text-anchor", "middle")
@@ -102,7 +100,12 @@ function draw(data) {
         .append("g")
         .attr("class", "x axis")
         .attr("transform", "translate(0," + (height - margin) + ")")
-        .call(x_axis);
+        .call(x_axis)
+        .selectAll("text") // selects all values in the x axis and rotates them 90 degrees 
+        .style("text-anchor", "end")
+        .attr("dx", "-.8em")
+        .attr("dy", "-.5em")
+        .attr("transform", "rotate(-90)");;
 
     let y_axis = d3.axisLeft(y_scale);
     d3.select("svg")
