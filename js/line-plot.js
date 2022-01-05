@@ -64,7 +64,7 @@ function draw(data) {
     let selectedIndicator = getSelectedIndicator();
 
 
-    let svg = d3.select('body').append('svg')
+    let svg = d3.select('.div-line-plot').append('svg')
         .attr('width', width)
         .attr('height', height);
 
