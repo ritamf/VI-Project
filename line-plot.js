@@ -14,9 +14,9 @@ $(function () {
 
 // INTERACTION
 
-let selectedCountry = "China"; // getSelectedCountry(dropdown);
-let selectedContinent = "Choose Continent";// getSelectedContinent(dropdown);
-let selectedIndicator = "cases"; // getSelectedIndicator(dropdown);
+var selectedCountry = "China"; // getSelectedCountry(dropdown);
+var selectedContinent = "Choose Continent";// getSelectedContinent(dropdown);
+var selectedIndicator = "cases"; // getSelectedIndicator(dropdown);
 
 
 
@@ -52,17 +52,17 @@ function getSelectedIndicator() {
 
 // VISUALIZATION LINE PLOT
 
-let width = 1300;
-let height = 400;
-let margin = 75;
+var width = 1300;
+var height = 400;
+var margin = 75;
 
 function draw(data) {
 
-    let selectedCountry = getSelectedCountry();
-    let selectedContinent = getSelectedContinent();
-    let selectedIndicator = getSelectedIndicator();
+    var selectedCountry = getSelectedCountry();
+    var selectedContinent = getSelectedContinent();
+    var selectedIndicator = getSelectedIndicator();
 
-    let svg = d3.select('.div-line-plot').append('svg')
+    var svg = d3.select('.div-line-plot').append('svg')
         .attr('width', width)
         .attr('height', height);
 
@@ -77,25 +77,25 @@ function draw(data) {
     data = data.filter(d => d.country == selectedCountry && d.indicator == selectedIndicator); // TODO: update plot after filtering info
 
     // The scale does not have extent, as it need all the values
-    let x_extent = data.map(d => d.year_week);
-    let x_scale = d3.scalePoint()
+    var x_extent = data.map(d => d.year_week);
+    var x_scale = d3.scalePoint()
         .range([margin, width - margin])
         .domain(x_extent);
 
     // returns a two-size array with min and max values of y from data
-    let y_extent = d3.extent(data, d => d.cumulative_count);
-    let y_scale = d3.scaleLinear()
+    var y_extent = d3.extent(data, d => d.cumulative_count);
+    var y_scale = d3.scaleLinear()
         .range([height - margin, margin])
         .domain([0, y_extent[1]]); // adding 0 to let all points have the same base
 
-    let circles = svg.selectAll("circle")
+    var circles = svg.selectAll("circle")
         .data(data)
         .join("circle")
         .attr("cx", (d, i) => x_scale(d.year_week))
         .attr("cy", d => y_scale(d.cumulative_count))
         .attr("r", 3);
 
-    let x_axis = d3.axisBottom(x_scale);
+    var x_axis = d3.axisBottom(x_scale);
     d3.select("svg")
         .append("g")
         .attr("class", "x axis")
@@ -107,7 +107,7 @@ function draw(data) {
         .attr("dy", "-.5em")
         .attr("transform", "rotate(-90)");;
 
-    let y_axis = d3.axisLeft(y_scale);
+    var y_axis = d3.axisLeft(y_scale);
     d3.select("svg")
         .append("g")
         .attr("class", "y axis")
@@ -115,7 +115,7 @@ function draw(data) {
         .call(y_axis);
 
 
-    let line = d3.line()
+    var line = d3.line()
         .x((d, i) => x_scale(d.year_week))
         .y(d => y_scale(d.cumulative_count));
 
