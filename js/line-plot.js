@@ -93,7 +93,7 @@ function draw(data) {
         .join("circle")
         .attr("cx", (d, i) => x_scale(d.year_week))
         .attr("cy", d => y_scale(d.cumulative_count))
-        .attr("r", 1);
+        .attr("r", 3);
 
     let x_axis = d3.axisBottom(x_scale);
     d3.select("svg")
