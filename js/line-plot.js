@@ -1,15 +1,15 @@
 // ADD ELEMENTS 
 
 $(function () {
-    $("#countriesDropdown").load("components/countriesDropdown.htm");
+    $("#country-dropdown").load("components/countriesDropdown.htm");
 });
 
 $(function () {
-    $("#continentsDropdown").load("components/continentsDropdown.htm");
+    $("#continents-dropdown").load("components/continentsDropdown.htm");
 });
 
 $(function () {
-    $("#indicatorDropdown").load("components/indicatorDropdown.htm");
+    $("#country-dropdownIndicator").load("components/indicatorDropdown.htm");
 });
 
 // INTERACTION

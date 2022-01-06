@@ -81,9 +81,12 @@
     <div class="container-fluid my-5">
         <h1>Line Plot</h1>
         
-        <div id="countriesDropdown"></div>
-        <div id="continentsDropdown"></div>
-        <div id="indicatorDropdown"></div>
+        <select id="country-dropdown" name="locality" onchange="setSelectedCountry(this)">
+        </select>
+        <select id="continents-dropdown" name="locality" onchange="setSelectedIndicator(this)">
+        </select>
+        <select id="country-dropdownIndicator" name="locality" onchange="setSelectedIndicator(this)">
+        </select>
 
         <div class="div-line-plot"></div>
 
