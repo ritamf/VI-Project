@@ -19,9 +19,10 @@ var colorScale = d3.scaleThreshold()
 
 // Load external data and boot
 d3.queue()
-    .defer(d3.json, "https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/world.geojson")
-    .defer(d3.csv, "https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/world_population.csv", function (d) { data.set(d.code, +d.pop); })
+    //.defer(d3.csv, "https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/world_population.csv", function (d) { data.set(d.code, +d.pop); })
+    .defer(d3.json, "datasets/our_countries_pop.json")
     .await(ready);
+
 
 function ready(error, topo) {
 
@@ -30,6 +31,7 @@ function ready(error, topo) {
             .transition()
             .duration(200)
             .style("opacity", .5)
+            .style("stroke", colorScale(data.get(d.id) || 0))
         d3.select(this)
             .transition()
             .duration(200)
@@ -42,11 +44,14 @@ function ready(error, topo) {
             .transition()
             .duration(200)
             .style("opacity", .8)
+            .style("stroke", "transparent")
         d3.select(this)
             .transition()
             .duration(200)
             .style("stroke", "transparent")
     }
+
+    console.log("yooo", topo.features);
 
     // Draw the map
     svg.append("g")
@@ -60,11 +65,12 @@ function ready(error, topo) {
         )
         // set the color of each country
         .attr("fill", function (d) {
-            d.total = data.get(d.id) || 0;
-            return colorScale(d.total);
+            
+            console.log(d.id, d.properties.name, d.population || -1);
+            return colorScale(d.population) || 'black';
         })
         .style("stroke", "transparent")
-        .attr("class", function (d) { return "Country" })
+        .attr("class", "Country")
         .style("opacity", .8)
         .on("mouseover", mouseOver)
         .on("mouseleave", mouseLeave)
