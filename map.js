@@ -31,7 +31,7 @@ function ready(error, topo) {
             .transition()
             .duration(200)
             .style("opacity", .5)
-            .style("stroke", colorScale(data.get(d.id) || 0))
+            .style("stroke", colorScale(d.population) || 'black')
         d3.select(this)
             .transition()
             .duration(200)
