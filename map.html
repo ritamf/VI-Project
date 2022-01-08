@@ -42,7 +42,7 @@
         <h1>Map</h1>
 
         <!-- Create an element where the map will take place -->
-        <svg id="my_dataviz" width="400" height="300"></svg>
+        <svg id="svg-map" width="400" height="300"></svg>
 
     </div>
 
@@ -68,10 +68,12 @@
 
     <!-- Load d3.js -->
     <script src="http://d3js.org/d3.v4.js"></script>
-    <script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
+
+    <!-- necessary for scale chromatic and projection of map with D3js -->
+    <script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script> 
     <script src="https://d3js.org/d3-geo-projection.v2.min.js"></script>
 
-
+    
     <script src="map.js"></script>
 
 </body>
