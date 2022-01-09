@@ -28,7 +28,7 @@ function preProcessData(data) {
         endDayNr = startDayNr + 6;
         startDate = new Date(year, 0, startDayNr);
         endDate = new Date(year, 0, startDayNr + 6);
-        d["year_week"] = new Date(year, 0, startDayNr);
+        d["year_week"] = startDate;
         const dateFormat = { month: 'short', day: 'numeric' };
         if (startDate.getYear() == endDate.getYear()) {
             d["date_string"] = String(startDate.getDate()).padStart(2,"0") + "/" + String(startDate.getMonth() + 1).padStart(2,"0") + " - " + String(endDate.getDate()).padStart(2,"0") + "/" + String(endDate.getMonth() + 1).padStart(2,"0");
@@ -96,12 +96,16 @@ function draw(data) {
         .text("Number of " + selectedIndicator + " in " + selectedCountry);
 
     data = data.filter(d => d.country == selectedCountry && d.indicator == selectedIndicator); // TODO: update plot after filtering info
-console.log(data);
-    // The scale does not have extent, as it need all the values
-    var x_extent = data.map((d, i) => i);
-    var x_scale = d3.scalePoint()
+
+    var x_linear_scale = d3.scaleLinear()
         .range([margin, width - margin])
-        .domain(x_extent);
+        .domain([0, data.length - 1])
+        .clamp(true);
+
+    var x_extent = d3.extent(data, d => d.year_week);
+    var x_time_scale = d3.scaleTime()
+        .range([margin, width - margin])
+        .domain([x_extent[0], x_extent[1]]);
 
     // returns a two-size array with min and max values of y from data
     var y_extent = d3.extent(data, d => d.weekly_count);
@@ -112,41 +116,91 @@ console.log(data);
     var circles = svg.selectAll("circle")
         .data(data)
         .join("circle")
-        .attr("cx", (d, i) => x_scale(i))
+        .attr("cx", d => x_time_scale(d.year_week))
         .attr("cy", d => y_scale(d.weekly_count))
         .attr("r", 3);
 
-    var x_axis = d3.axisBottom(x_scale);
-    d3.select("svg")
-        .append("g")
+    var x_axis = d3.axisBottom(x_time_scale)
+        .ticks(d3.timeMonth.every(1))
+        .tickFormat(date => {
+            if (d3.timeYear(date) < date) {
+            return d3.timeFormat('%b')(date);
+            } else {
+            return d3.timeFormat('%Y')(date);
+            }
+        });
+
+    svg.append("g")
         .attr("class", "x axis")
         .attr("transform", "translate(0," + (height - margin) + ")")
-        .call(x_axis)
-        .selectAll("text") // selects all values in the x axis and rotates them 90 degrees 
-        .data(data)
-        .text(d => d["date_string"])
-        .style("text-anchor", "end")
-        .style("font-size", "12px")
-        .attr("dx", "-.8em")
-        .attr("dy", "-.5em")
-        .attr("transform", "rotate(-80)");
+        .call(x_axis);
 
     var y_axis = d3.axisLeft(y_scale);
-    d3.select("svg")
-        .append("g")
+    svg.append("g")
         .attr("class", "y axis")
         .attr("transform", "translate(" + (margin) + ", 0" + ")")
         .call(y_axis);
 
-
     var line = d3.line()
-        .x((d, i) => x_scale(i))
+        .x(d => x_time_scale(d.year_week))
         .y(d => y_scale(d.weekly_count));
 
-    d3.select("svg")
-        .append("path")
+    svg.append("path")
         .attr("d", line(data))
         .attr("class", "linha");
+
+    let datapointlabel = svg.append("g")
+        .attr("class", "datapointlabel")
+        .attr("visibility", "hidden");
+
+    let datapointlabel_width = 100,
+        datapointlabel_height = 50,
+        datapointlabel_margin = 4;
+    datapointlabel.append("rect")
+            .attr("width", datapointlabel_width)
+            .attr("height", datapointlabel_height)
+            .attr("x", x_linear_scale(0))
+            .attr("y", y_scale(0) - datapointlabel_height / 2)
+            .attr("rx", 2)
+            .attr("fill", "white")
+            .attr("stroke", "black");
+    
+    datapointlabel.append("text")
+        .attr("x", datapointlabel_margin + x_linear_scale(0))
+        .attr("y", datapointlabel_margin + y_scale(0) - datapointlabel_height / 2)
+        .attr("style", "text-anchor:left;dominant-baseline:hanging;")
+        .append("tspan")
+        .clone()
+        .clone();
+        
+    function handleMouseOverEvent(e) {
+
+        let mouse = d3.pointer(e),
+            data_index = Math.round(x_linear_scale.invert(mouse[0])), 
+            draw_area_width = width - margin * 2,
+            increment_size = draw_area_width / (data.length - 1),
+            relative_x = mouse[0] - margin,
+            relative_y = mouse[1] - margin,
+            x = data_index * increment_size,
+            y = y_scale(data[data_index].weekly_count) - (height - margin);
+            console.log(y);
+    
+        if (relative_x >= 0 && relative_x <= width - margin * 2 &&
+            relative_y >= 0 && relative_y <= height - margin * 2 ) {
+            svg.select("g.datapointlabel")
+                .attr("visibility", "visible")
+                .attr("transform","translate(" + x + "," + y + ")")
+                .select("text tspan")
+                    .text(data[data_index].weekly_count);
+        } else {
+            svg.select("g.datapointlabel")
+                .attr("visibility", "hidden");
+        }
+    }
+        
+    svg.on("mouseover", e => handleMouseOverEvent(e))
+        .on("mousemove", e => handleMouseOverEvent(e))
+        .on("mouseout", e => handleMouseOverEvent(e));
 }
 
 d3.json("datasets/cases_deaths/cases_deaths.json")
