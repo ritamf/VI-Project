@@ -22,19 +22,11 @@ var selectedYear = 2020;
 function preProcessData(data) {
 
     let preProcessedData = data.map(d => {
-        year = +d["year_week"].split("-")[0];
-        week = +d["year_week"].split("-")[1];
+        year = +d.year_week.split("-")[0];
+        week = +d.year_week.split("-")[1];
         startDayNr = 1 + (week - 1) * 7;
-        endDayNr = startDayNr + 6;
         startDate = new Date(year, 0, startDayNr);
-        endDate = new Date(year, 0, startDayNr + 6);
-        d["year_week"] = startDate;
-        const dateFormat = { month: 'short', day: 'numeric' };
-        if (startDate.getYear() == endDate.getYear()) {
-            d["date_string"] = String(startDate.getDate()).padStart(2,"0") + "/" + String(startDate.getMonth() + 1).padStart(2,"0") + " - " + String(endDate.getDate()).padStart(2,"0") + "/" + String(endDate.getMonth() + 1).padStart(2,"0");
-        } else {
-            d["date_string"] = String(startDate.getDate()).padStart(2,"0") + "/" + String(startDate.getMonth() + 1).padStart(2,"0") + " - " + String(endDate.getDate()).padStart(2,"0") + "/" + String(endDate.getMonth() + 1).padStart(2,"0");
-        }
+        d.year_week = startDate;
         return d;
     });
     
@@ -111,7 +103,8 @@ function draw(data) {
     var y_extent = d3.extent(data, d => d.weekly_count);
     var y_scale = d3.scaleLinear()
         .range([height - margin, margin])
-        .domain([0, y_extent[1]]);
+        .domain([0, y_extent[1]])
+        .nice();
 
     var circles = svg.selectAll("circle")
         .data(data)
@@ -147,32 +140,59 @@ function draw(data) {
 
     svg.append("path")
         .attr("d", line(data))
-        .attr("class", "linha");
+        .attr("class", "line");
 
-    let datapointlabel = svg.append("g")
+    let datapoint_label = svg.append("g")
         .attr("class", "datapointlabel")
         .attr("visibility", "hidden");
 
-    let datapointlabel_width = 100,
+    let datapointlabel_width = 130,
         datapointlabel_height = 50,
-        datapointlabel_margin = 4;
-    datapointlabel.append("rect")
+        datapointlabel_margin = 4,
+        datapointlabel_x_origin = x_linear_scale(0) + 2
+        datapointlabel_y_origin = y_scale(0) - (height - margin),
+        triangle_path = d3.path(),
+        triangle_size = 2;
+
+    triangle_path.moveTo(datapointlabel_x_origin, datapointlabel_y_origin);
+    triangle_path.lineTo(datapointlabel_x_origin + triangle_size,
+                            datapointlabel_y_origin + triangle_size);
+    triangle_path.lineTo(datapointlabel_x_origin + triangle_size,
+                            datapointlabel_y_origin - triangle_size);
+    triangle_path.closePath();
+    datapoint_label.append("path")
+        .attr("d", triangle_path.toString());
+
+    datapoint_label.append("rect")
             .attr("width", datapointlabel_width)
             .attr("height", datapointlabel_height)
-            .attr("x", x_linear_scale(0))
-            .attr("y", y_scale(0) - datapointlabel_height / 2)
+            .attr("x", datapointlabel_x_origin + triangle_size)
+            .attr("y", datapointlabel_y_origin - datapointlabel_height / 2)
             .attr("rx", 2)
             .attr("fill", "white")
             .attr("stroke", "black");
     
-    datapointlabel.append("text")
-        .attr("x", datapointlabel_margin + x_linear_scale(0))
-        .attr("y", datapointlabel_margin + y_scale(0) - datapointlabel_height / 2)
+    let datapointlabel_text = datapoint_label.append("text")
+        .attr("x", datapointlabel_x_origin + triangle_size + datapointlabel_margin)
+        .attr("y", datapointlabel_y_origin - datapointlabel_height / 2 + datapointlabel_margin)
+        .attr("class", "datapointlabel")
         .attr("style", "text-anchor:left;dominant-baseline:hanging;")
-        .append("tspan")
-        .clone()
-        .clone();
         
+    datapointlabel_text.append("tspan")
+        .text("Week: ")
+        .attr("style", "font-weight: bold;");
+    datapointlabel_text.append("tspan")
+        .attr("class", "week")
+        .attr("style", "font-weight: normal;");
+    datapointlabel_text.append("tspan")
+        .text("Count: ")
+        .attr("dy", "1.4em")
+        .attr("x", datapointlabel_x_origin + triangle_size + datapointlabel_margin)
+        .attr("style", "font-weight: bold;");
+    datapointlabel_text.append("tspan")
+        .attr("class", "count")
+        .attr("style", "font-weight: normal;");
+    
     function handleMouseOverEvent(e) {
 
         let mouse = d3.pointer(e),
@@ -182,17 +202,35 @@ function draw(data) {
             relative_x = mouse[0] - margin,
             relative_y = mouse[1] - margin,
             x = data_index * increment_size,
-            y = y_scale(data[data_index].weekly_count) - (height - margin);
-            console.log(y);
+            y = y_scale(data[data_index].weekly_count),
+            date_string;
     
         if (relative_x >= 0 && relative_x <= width - margin * 2 &&
             relative_y >= 0 && relative_y <= height - margin * 2 ) {
-            svg.select("g.datapointlabel")
+            
+            // create week string
+            startDate = data[data_index].year_week;
+            endDate = new Date(startDate.getFullYear(), 
+                               startDate.getMonth(),
+                               startDate.getDate() + 6)
+            if (startDate.getFullYear() != endDate.getFullYear()) {
+                endDate = new Date(startDate.getYear(), 
+                                   startDate.getMonth(),
+                                   31)
+            }
+            const dateFormat = { month: 'short', day: 'numeric' };
+            date_string = String(startDate.getDate()).padStart(2,"0") + "/" + String(startDate.getMonth() + 1).padStart(2,"0") + " - " + String(endDate.getDate()).padStart(2,"0") + "/" + String(endDate.getMonth() + 1).padStart(2,"0");
+
+            // fill datapoint label values and make it visible
+            datapoint_label
                 .attr("visibility", "visible")
-                .attr("transform","translate(" + x + "," + y + ")")
-                .select("text tspan")
+                .attr("transform","translate(" + x + "," + y + ")");
+            datapoint_label.select("tspan.week")
+                .text(date_string);
+            datapoint_label.select("tspan.count")
                     .text(data[data_index].weekly_count);
         } else {
+            // hide datapoint label
             svg.select("g.datapointlabel")
                 .attr("visibility", "hidden");
         }
