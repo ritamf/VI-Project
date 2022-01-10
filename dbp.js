@@ -30,16 +30,25 @@ var yAxis = svg.append("g")
 function update(selectedVar) {
 
     // Parse the Data
-    d3.csv("https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/barplot_change_data.csv", function (data) {
+    d3.csv("datasets/cases_deaths/cases_deaths_sample.csv", function (data) {
+
+        data = data.map(function(d) {
+            return {
+              country: d.country,
+              population: d.population,
+              weekly_counts: d.weekly_counts
+            }
+          });
 
         // X axis
-        x.domain(data.map(function (d) { return d.group; }))
+        x.domain(data.map(function (d) { console.log(data); return d.country; }))
         xAxis.transition().duration(1000).call(d3.axisBottom(x))
 
         // Add Y axis
         y.domain([0, d3.max(data, function (d) { return +d[selectedVar] })]);
         yAxis.transition().duration(1000).call(d3.axisLeft(y));
 
+        
         // variable u: map data to existing bars
         var u = svg.selectAll("rect")
             .data(data)
@@ -51,7 +60,7 @@ function update(selectedVar) {
             .merge(u)
             .transition()
             .duration(1000)
-            .attr("x", function (d) { return x(d.group); })
+            .attr("x", function (d) { return x(d.country); })
             .attr("y", function (d) { return y(d[selectedVar]); })
             .attr("width", x.bandwidth())
             .attr("height", function (d) { return height - y(d[selectedVar]); })
@@ -61,4 +70,4 @@ function update(selectedVar) {
 }
 
 // Initialize plot
-update('var1')
+update('population')
