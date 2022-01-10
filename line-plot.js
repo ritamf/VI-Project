@@ -167,7 +167,7 @@ function draw(data) {
         .attr("d", line2021(data2021))
         .attr("class", "line series2021");
 
-    let datapointlabel_width = 130,
+    let datapointlabel_width = 150,
         datapointlabel_height = 55,
         datapointlabel_margin = 4,
         datapointlabel_x_origin = x_linear_scale(0)
@@ -250,11 +250,16 @@ function draw(data) {
         .attr("class", "count2021")
         .attr("style", "font-weight: normal;");
     
-    let legend_width = 130,
-        legend_height = 55,
+    let legend_width = 70,
+        legend_height = 45,
         legend_margin = 4,
         legend_x_position = width - margin;
-        legend_y_position = height / 2;
+        legend_y_position = height / 2 - legend_height / 2,
+        legend_text_offset = 10,
+        legend_line_length = 20,
+        text_line_height = 16,
+        text_x = legend_x_position + legend_line_length + legend_margin * 2
+        text_y = legend_y_position + legend_margin + legend_text_offset;
     
     let legend = svg.append("g")
         .attr("class", "legend");
@@ -262,9 +267,39 @@ function draw(data) {
         .attr("width", legend_width)
         .attr("height", legend_height)
         .attr("x", legend_x_position)
-        .attr("y", legend_y_position - legend_height / 2)
+        .attr("y", legend_y_position)
         .attr("fill", "white")
         .attr("stroke", "black");
+    let legend_text = legend.append("text")
+        .attr("class", "legend")
+        .attr("style", "text-anchor:left;dominant-baseline:middle;");
+    legend_text.append("tspan")
+        .attr("class", "week")
+        .attr("style", "font-weight: normal;")
+        .attr("x", text_x)
+        .attr("y", text_y + 1)
+        .text("2020");
+    legend_text.append("tspan")
+        .text("2020: ")
+        .attr("x", text_x)
+        .attr("dy", text_line_height)
+        .text("2021");
+    legend.append("path")
+        .attr("d", "M" + (legend_x_position + legend_margin) + "," + text_y + "L" + (text_x - legend_margin) + "," + text_y )
+        .attr("class", "line series2020");
+        legend.append("path")
+        .attr("d", "M" + (legend_x_position + legend_margin) + "," + (text_y + text_line_height) + "L" + (text_x - legend_margin) + "," + (text_y + text_line_height) )
+        .attr("class", "line series2021");
+    legend.append("circle")
+        .attr("cx", legend_x_position + legend_margin + legend_line_length / 2)
+        .attr("cy", text_y)
+        .attr("r", 3)
+        .attr("class", "series2020");
+    legend.append("circle")
+        .attr("cx", legend_x_position + legend_margin + legend_line_length / 2)
+        .attr("cy", text_y + text_line_height)
+        .attr("r", 3)
+        .attr("class", "series2021");
 
     function handleMouseOverEvent(e) {
 
