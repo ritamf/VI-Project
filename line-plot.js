@@ -20,6 +20,8 @@ var selectedIndicator = "cases";
 
 function preProcessCovidData(data) {
     
+    data = data.filter(d => d.hasOwnProperty("weekly_count"));
+
     let preProcessedData = data.map(d => {
         year = +d.year_week.split("-")[0];
         week = +d.year_week.split("-")[1];
@@ -29,6 +31,7 @@ function preProcessCovidData(data) {
         d.year = year;
         d.week = week;
         d.week_string = weekToString(week);
+        d.weekly_count = +d.weekly_count;
         return d;
     });
 
