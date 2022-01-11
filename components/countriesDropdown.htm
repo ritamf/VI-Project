@@ -39,7 +39,9 @@
                         }
 
                         let setCountries = Array.from(new Set(countries));
-                        let setContinents = new Array();
+                        setCountries = setCountries.filter(function (item) {
+                            return item !== defaultOption.text 
+                        })
 
                         let option;
 
@@ -50,7 +52,7 @@
                                 option.value = setCountries[i];
                                 dropdown.add(option);
 
-                            } else { // countries
+                            } else { // countries (not including default country)
                                 option = document.createElement('option');
                                 option.text = setCountries[i];
                                 option.value = setCountries[i];
