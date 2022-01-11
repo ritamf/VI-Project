@@ -14,52 +14,64 @@ $(function () {
 
 // INTERACTION
 
-var selectedCountry = "China"; // getSelectedCountry(dropdown);
-var selectedContinent = "Choose Continent";// getSelectedContinent(dropdown);
-var selectedIndicator = "cases"; // getSelectedIndicator(dropdown);
+var selectedCountry = "China";
+var selectedContinent = "Choose Continent";
+var selectedIndicator = "cases";
 
-function preProcessData(data) {
-
+function preProcessCovidData(data) {
+    
     let preProcessedData = data.map(d => {
         year = +d.year_week.split("-")[0];
         week = +d.year_week.split("-")[1];
         startDayNr = 1 + (week - 1) * 7;
         startDate = new Date(year, 0, startDayNr);
         d.year_week = startDate;
+        d.year = year;
+        d.week = week;
+        d.week_string = weekToString(week);
         return d;
     });
-    
-    return preProcessedData;
+
+    groupedData = d3.group(preProcessedData,
+        group1 => group1.country,
+        group2 => group2.indicator,
+        group3 => group3.year);
+
+    return groupedData;
+}
+
+function weekToString(week_nr) {
+    startDayNr = 1 + (week_nr - 1) * 7;
+    startDate = new Date(year, 0, startDayNr);
+    endDate = new Date(year, 0, startDayNr + 6);
+    if (startDate.getFullYear() != endDate.getFullYear()) {
+        endDate = new Date(startDate.getYear(), 
+                            startDate.getMonth(),
+                            31)
+    }
+    const dateFormat = { month: 'short', day: 'numeric' };
+    return String(startDate.getDate()).padStart(2,"0") + "/" + String(startDate.getMonth() + 1).padStart(2,"0") + " - " + String(endDate.getDate()).padStart(2,"0") + "/" + String(endDate.getMonth() + 1).padStart(2,"0");
 }
 
 function setSelectedCountry(dropdown) {
     selectedCountry = dropdown.options[dropdown.selectedIndex].text;
+    document.getElementsByTagName("svg")[0].innerHTML = "";
+    drawGraph();
     console.log("set " + selectedCountry);
-}
-
-function getSelectedCountry() {
-    console.log("get " + selectedCountry);
-    return selectedCountry;
 }
 
 function setSelectedContinent(dropdown) {
     selectedContinent = dropdown.options[dropdown.selectedIndex].text;
+    document.getElementsByTagName("svg")[0].innerHTML = "";
+    drawGraph();
     console.log("set " + selectedContinent);
-}
-
-function getSelectedContinent() {
-    console.log("get " + selectedContinent);
-    return selectedContinent;
 }
 
 function setSelectedIndicator(dropdown) {
     selectedIndicator = dropdown.options[dropdown.selectedIndex].text;
+    document.getElementsByTagName("svg")[0].innerHTML = "";
+    drawGraph();
     console.log("set " + selectedIndicator);
-}
-
-function getSelectedIndicator() {
-    console.log("get " + selectedIndicator);
-    return selectedIndicator;
 }
 
 // VISUALIZATION LINE PLOT
@@ -68,17 +80,23 @@ var width = 1300;
 var height = 400;
 var margin = 90;
 
+var svg = d3.select('.div-line-plot').append('svg')
+    .attr('width', width)
+    .attr('height', height);
+
+drawGraph();
+
+function drawGraph() {
+    d3.json("datasets/cases_deaths/cases_deaths.json")
+        .then(data => {
+            draw(preProcessCovidData(data));
+        })
+        ;//.catch(function (err) { console.log(err) });
+}
+
 function draw(data) {
 
-    var selectedCountry = getSelectedCountry();
-    var selectedContinent = getSelectedContinent();
-    var selectedIndicator = getSelectedIndicator();
-
-    var svg = d3.select('.div-line-plot').append('svg')
-        .attr('width', width)
-        .attr('height', height);
-
-    svg.append("text") // title of plot is added here
+    svg.append("text")
         .attr("x", width / 2)
         .attr("y", margin * 3 / 4)
         .attr("text-anchor", "middle")
@@ -86,20 +104,18 @@ function draw(data) {
         .style("text-decoration", "underline")
         .text("Number of " + selectedIndicator + " in " + selectedCountry);
 
-    // TODO: update plot after filtering info
-    data2020 = data.filter(d => d.country == selectedCountry && d.indicator == selectedIndicator && d.year_week.getFullYear() == 2020);
-    data2021 = data.filter(d => d.country == selectedCountry && d.indicator == selectedIndicator && d.year_week.getFullYear() == 2021);
-
+    data2020 = data.get(selectedCountry).get(selectedIndicator).get(2020);
+    data2021 = data.get(selectedCountry).get(selectedIndicator).get(2021);
+    
     var x_linear_scale = d3.scaleLinear()
         .range([margin, width - margin])
-        .domain([0, data2020.length - 1])
+        .domain([1, 53])
         .clamp(true);
 
-    var x_extent = data2020.map((d, i) => i);
+    week_nrs = d3.range(1, 54);
     var x_scale = d3.scalePoint()
         .range([margin, width - margin])
-        .domain(x_extent);
-
+        .domain(week_nrs);
     let y_max = d3.max([d3.max(data2020, d => d.weekly_count),
                         d3.max(data2021, d => d.weekly_count)]);
     var y_scale = d3.scaleLinear()
@@ -110,7 +126,7 @@ function draw(data) {
     svg.selectAll("circle.series2020")
         .data(data2020)
         .join("circle")
-        .attr("cx", (d, i) => x_scale(i))
+        .attr("cx", d => x_scale(d.week))
         .attr("cy", d => y_scale(d.weekly_count))
         .attr("r", 3)
         .attr("class", "series2020");
@@ -118,7 +134,7 @@ function draw(data) {
     svg.selectAll("circle.series2021")
         .data(data2021)
         .join("circle")
-        .attr("cx", (d, i) => x_scale(i))
+        .attr("cx", d => x_scale(d.week))
         .attr("cy", d => y_scale(d.weekly_count))
         .attr("r", 3)
         .attr("class", "series2021");
@@ -152,7 +168,7 @@ function draw(data) {
         .call(y_axis);
 
     var line2020 = d3.line()
-        .x((d, i) => x_scale(i))
+        .x((d, i) => x_scale(d.week))
         .y(d => y_scale(d.weekly_count));
 
     svg.append("path")
@@ -160,7 +176,7 @@ function draw(data) {
         .attr("class", "line series2020");
 
     var line2021 = d3.line()
-        .x((d, i) => x_scale(i))
+        .x((d, i) => x_scale(d.week))
         .y(d => y_scale(d.weekly_count));
 
     svg.append("path")
@@ -170,7 +186,7 @@ function draw(data) {
     let datapointlabel_width = 150,
         datapointlabel_height = 55,
         datapointlabel_margin = 4,
-        datapointlabel_x_origin = x_linear_scale(0)
+        datapointlabel_x_origin = x_linear_scale(1)
         datapointlabel_y_origin = y_scale(0) - (height - margin),
         datapoint_label_offset = 4,
         vertical_line_path = d3.path(),
@@ -304,43 +320,55 @@ function draw(data) {
     function handleMouseOverEvent(e) {
 
         let mouse = d3.pointer(e),
-            data_index = Math.round(x_linear_scale.invert(mouse[0])), 
+            week_nr = Math.round(x_linear_scale.invert(mouse[0])), 
             draw_area_width = width - margin * 2,
-            increment_size = draw_area_width / (data2020.length - 1),
+            increment_size = draw_area_width / (53 - 1),
             relative_x = mouse[0] - margin,
             relative_y = mouse[1] - margin,
-            x = data_index * increment_size,
-            y2020 = y_scale(data2020[data_index].weekly_count),
-            y2021 = y_scale(data2021[data_index].weekly_count),
-            min_y = d3.min([y2020, y2021]),
-            date_string;
-    
+            x = (week_nr - 1) * increment_size,
+            y2020 = data2020.filter(d => d.week == week_nr),
+            y2021 = data2021.filter(d => d.week == week_nr),
+            min_y,
+            weekly_count2020, weekly_count2021, week_string;
+
+    week_string = weekToString(week_nr);
+    if (y2020.length != 0) {
+        weekly_count2020 = y2020[0].weekly_count;
+        y2020 = y_scale(weekly_count2020);
+    } else {
+        weekly_count2020 = "-";
+        y2020 = y_scale(0);
+    }
+    if (y2021.length != 0) {
+        weekly_count2021 = y2021[0].weekly_count;
+        y2021 = y_scale(weekly_count2021);
+    } else {
+        weekly_count2021 = "-";
+        y2021 = y_scale(0);
+    }
+    if (y2020.length != 0 && y2021.length != 0) {
+        min_y = d3.min([y2020, y2021])
+    } else {
+        if (y2020.length != 0) {
+            min_y = y2021;
+        } else {
+            min_y = y2020;
+        }
+    }
+
         if (relative_x >= 0 && relative_x <= width - margin * 2 &&
             relative_y >= 0 && relative_y <= height - margin * 2 ) {
-            
-            // create week string
-            startDate = data2020[data_index].year_week;
-            endDate = new Date(startDate.getFullYear(), 
-                               startDate.getMonth(),
-                               startDate.getDate() + 6)
-            if (startDate.getFullYear() != endDate.getFullYear()) {
-                endDate = new Date(startDate.getYear(), 
-                                   startDate.getMonth(),
-                                   31)
-            }
-            const dateFormat = { month: 'short', day: 'numeric' };
-            date_string = String(startDate.getDate()).padStart(2,"0") + "/" + String(startDate.getMonth() + 1).padStart(2,"0") + " - " + String(endDate.getDate()).padStart(2,"0") + "/" + String(endDate.getMonth() + 1).padStart(2,"0");
 
             // fill datapoint label values, make it visible and move it to the right position
             datapoint_label
                 .attr("visibility", "visible")
                 .attr("transform","translate(" + x + "," + min_y + ")");
             datapoint_label.select("tspan.week")
-                .text(date_string);
+                .text(week_string);
             datapoint_label.select("tspan.count2020")
-                .text(data2020[data_index].weekly_count);
+                .text(weekly_count2020);
             datapoint_label.select("tspan.count2021")
-                .text(data2021[data_index].weekly_count);
+                .text(weekly_count2021);
             
             // repeat for the vertical line and data circles
             vertical_line_d = vertical_line.attr("d");
@@ -371,10 +399,3 @@ function draw(data) {
         .on("mousemove", e => handleMouseOverEvent(e))
         .on("mouseout", e => handleMouseOverEvent(e));
 }
-
-d3.json("datasets/cases_deaths/cases_deaths.json")
-    .then(data => {
-        let preProcessedData = preProcessData(data);
-        draw(preProcessedData);
-    })
-    .catch(function (err) { console.log(err) });
