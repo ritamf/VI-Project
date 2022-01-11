@@ -47,7 +47,6 @@ function update(selectedVar) {
         // Add Y axis
         y.domain([0, d3.max(data, function (d) { return +d[selectedVar] })]);
         yAxis.transition().duration(1000).call(d3.axisLeft(y));
-
         
         // variable u: map data to existing bars
         var u = svg.selectAll("rect")

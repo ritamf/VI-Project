@@ -11,10 +11,23 @@
     <link rel="icon" type="image/x-icon" href="assets/covid.ico" /> <!-- Favicon-->
     <link href="css/styles.css" rel="stylesheet"> <!-- Core theme CSS (includes Bootstrap) -->
 
+    <style>
+        .tooltip {
+            position: absolute;
+            text-align: center;
+            width: 60px;
+            height: 12px;
+            padding: 8px;
+            margin-top: -20px;
+            font: 10px sans-serif;
+            background: #ddd;
+            pointer-events: none;
+        }
+    </style>
+
 </head>
 
 <body class="d-flex flex-column min-vh-100">
-
 
     <!-- Responsive navbar-->
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
@@ -36,16 +49,20 @@
         </div>
     </nav>
 
-
     <!-- Page Content-->
     <div class="container-fluid my-5">
         <h1>Map</h1>
 
+        <p>Hover the mouse over a country to see more information about it.</p>
+
         <!-- Create an element where the map will take place -->
-        <svg id="svg-map" width="400" height="300"></svg>
-
+        <svg id="my_dataviz" width="400" height="300"></svg>
+        
+        <p id="countryCode"></p>
+        <p id="country"></p>
+        <p id="continent"></p>
+        <p id="population"></p>
     </div>
-
 
     <!-- Footer-->
     <div class="wrapper flex-grow-1"></div>
@@ -54,7 +71,6 @@
             <p class="m-0 text-center text-white">Copyright &copy; VI Project - Visualize Covid Data 2021/2022</p>
         </div>
     </footer>
-
 
 
     <!--jQuery-->
@@ -70,10 +86,10 @@
     <script src="http://d3js.org/d3.v4.js"></script>
 
     <!-- necessary for scale chromatic and projection of map with D3js -->
-    <script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script> 
+    <script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
     <script src="https://d3js.org/d3-geo-projection.v2.min.js"></script>
 
-    
+
     <script src="map.js"></script>
 
 </body>
