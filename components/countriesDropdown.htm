@@ -39,11 +39,18 @@
                         }
 
                         let setCountries = Array.from(new Set(countries));
+                        let setContinents = new Array();
 
                         let option;
 
                         for (let i = 0; i < setCountries.length; i++) {
                             if (!setCountries[i].includes("(total)")) {
+                                option = document.createElement('option');
+                                option.text = setCountries[i];
+                                option.value = setCountries[i];
+                                dropdown.add(option);
+
+                            } else { // countries
                                 option = document.createElement('option');
                                 option.text = setCountries[i];
                                 option.value = setCountries[i];
