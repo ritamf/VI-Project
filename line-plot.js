@@ -14,7 +14,7 @@ $(function () {
 
 // INTERACTION
 
-var selectedCountry = "China";
+var selectedCountry = "Portugal";
 var selectedContinent = "Choose Continent";
 var selectedIndicator = "cases";
 
