@@ -11,22 +11,34 @@ var projection = d3.geoMercator()
     .center([0, 20])
     .translate([width / 2, height / 2]);
 
-// Data and declare colorScale
+// Data and colorScale
 var data = d3.map();
-var colorScale;
+colorScale = d3.scaleThreshold()
+    .domain([100000, 1000000, 10000000, 30000000, 100000000, 500000000])
+    .range(d3.schemeBlues[7]);
+
+//  zoom
+const zoom = d3.zoom()
+    .scaleExtent([0.8, 8])
+    .on('zoom', function () {
+        svg
+            .selectAll('path') // To prevent stroke width from scaling
+            .attr('transform', d3.event.transform);
+    });
+
+svg.call(zoom);
+
+var covidStats;
 
 // Load external data and boot
 d3.queue()
     .defer(d3.json, "https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/world.geojson")
     .defer(d3.csv, "datasets/cases_deaths/cases_deaths.csv", function (d) {
 
-        data.set(d.country_code, [d.country, d.country_code, d.continent, +d.population, d.indicator, +d.weekly_count, d.year_week, +d.rate_14_day, +d.cumulative_count, d.source]);
+        data.set(d.country_code, [d.country, d.country_code, d.continent, +d.population]);
 
-        var attribute = +data.get(d.country_code)[3]
+        covidStats = data.set(d.indicator, [+d.weekly_count, d.year_week, +d.rate_14_day, +d.cumulative_count, d.source])
 
-        colorScale = d3.scaleThreshold()
-            .domain([Math.min(attribute), Math.min(attribute) * 10, Math.min(attribute) * 100, Math.min(attribute) * 3, Math.min(attribute) * 10 / 3, Math.max(attribute)])
-            .range(d3.schemeBlues[7]);
     })
     .await(ready);
 
