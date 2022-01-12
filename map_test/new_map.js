@@ -1,7 +1,7 @@
 var dropdown_indicator = "cases";
+var dropdown_count = "Normalized" // other dropdown option: "Raw count"
 var dropdown_year = 2021;
-var dropdown_week = 47;
-
+var dropdown_week = 20;
 
 d3.json("custom.geo.json")
 .then(geodata => {
@@ -21,12 +21,26 @@ d3.json("custom.geo.json")
 
 function draw(geo_data) {
 
-    var mouseOver = function (d) {
-        console.log(d.covidData.country);
-        d3.select("#countryCode").text("mouse over on" )
+    let mouseOver = function (e, d) {
+        console.log(d);
+        let data_value;
+        if (d.properties.covid != undefined) {
+            if (d.properties.covid.get(dropdown_indicator).get(dropdown_year).get(dropdown_week) != undefined) {
+                if (dropdown_count == "Normalized") {
+                    data_value = d.properties.covid.get(dropdown_indicator).get(dropdown_year).get(dropdown_week)[0].normalized.toExponential(3);
+                } else {
+                    data_value = d.properties.covid.get(dropdown_indicator).get(dropdown_year).get(dropdown_week)[0].weekly_count;
+                }
+            } else {
+                data_value = "-";
+            }
+        } else {
+            data_value = "-";
+        }
+        d3.select("#countryCode").text(data_value);
     }
     
-    let mouseLeave = function (d) {
+    let mouseLeave = function (e, d) {
         d3.select("#countryCode").text("mouse over off")
     }
 
@@ -37,6 +51,16 @@ function draw(geo_data) {
     let svg = d3.select("body").append("svg")
         .attr("width", width)
         .attr("height", height);
+
+    const zoom = d3.zoom()
+        .scaleExtent([0.8, 8])
+        .on('zoom', function () {
+            svg
+                .selectAll('path') // To prevent stroke width from scaling
+                .attr('transform', d3.event.transform);
+        });
+    
+    svg.call(zoom);
 
     let map = svg.append("g")
         .attr('class', 'map');
@@ -51,22 +75,27 @@ function draw(geo_data) {
     map.selectAll("path")
         .data(geo_data)
         .join("path")
-            .attr("d", feature => path(feature))
+            .attr("d", feature => {
+                // console.log(feature.properties.hasOwnProperty("covid"));
+                // console.log(feature.properties.covid.get(dropdown_indicator) == undefined);
+                return path(feature)})
             .attr("fill", feature => {
-                covid = feature.properties.covid;
-                if (covid === undefined) {
-                    return "black";
-                } else {
-                    data = covid.get(dropdown_indicator).get(dropdown_year).filter(line => line.week == dropdown_week)[0];
-                    if (data === undefined) {
+                if (feature.properties.covid != undefined) {
+                    if (feature.properties.covid.get(dropdown_indicator).get(dropdown_year).get(dropdown_week) != undefined) {
+                        if (dropdown_count == "Normalized") {
+                            return colorScale(feature.properties.covid.get(dropdown_indicator).get(dropdown_year).get(dropdown_week)[0].normalized);
+                        } else {
+                            return colorScale(feature.properties.covid.get(dropdown_indicator).get(dropdown_year).get(dropdown_week)[0].weekly_count);
+                        }
+                    } else {
                         return "black";
                     }
-                    console.log(data);
-                    return colorScale(data.weekly_count);
+                } else {
+                    return "black";
                 }
             })
-            .on("mouseover", mouseOver)
-            .on("mouseleave", mouseLeave);
+            .on("mouseover", (d,e) => mouseOver(d,e))
+            .on("mouseleave", (d,e) => mouseLeave(d,e));
 
 };
 
@@ -84,13 +113,16 @@ function preProcessCovidData(data) {
         d.week = week;
         d.week_string = weekToString(week);
         d.weekly_count = +d.weekly_count;
+        d.population = +d.population;
+        d.normalized = d.weekly_count / d.population;
         return d;
     });
 
     groupedData = d3.group(preProcessedData,
         group1 => group1.country_code,
         group2 => group2.indicator,
-        group3 => group3.year);
+        group3 => group3.year,
+        group4 => group4.week);
 
     return groupedData;
 }
@@ -108,4 +140,3 @@ function weekToString(week_nr) {
     const dateFormat = { month: 'short', day: 'numeric' };
     return String(startDate.getDate()).padStart(2,"0") + "/" + String(startDate.getMonth() + 1).padStart(2,"0") + " - " + String(endDate.getDate()).padStart(2,"0") + "/" + String(endDate.getMonth() + 1).padStart(2,"0");
 }
-
