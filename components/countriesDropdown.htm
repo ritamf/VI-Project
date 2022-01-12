@@ -10,13 +10,8 @@
     <script>
 
         let dropdown = document.getElementById('country-dropdown');
-        dropdown.length = 0;
 
-        let defaultOption = document.createElement('option');
-        defaultOption.text = 'Afghanistan';
-
-        dropdown.add(defaultOption);
-        dropdown.selectedIndex = 0;
+        let defaultSelectedText = "Portugal";
 
         const url = '../datasets/cases_deaths/cases_deaths.json';
 
@@ -39,9 +34,6 @@
                         }
 
                         let setCountries = Array.from(new Set(countries));
-                        setCountries = setCountries.filter(function (item) {
-                            return item !== defaultOption.text 
-                        })
 
                         let option;
 
@@ -50,12 +42,18 @@
                                 option = document.createElement('option');
                                 option.text = setCountries[i]
                                 option.value = setCountries[i]
+
+                                if (defaultSelectedText === setCountries[i]) option.selected = "selected";
+
                                 dropdown.add(option);
 
                             } else { // continents
                                 option = document.createElement('option');
                                 option.text = setCountries[i].replace("total", "total continent");
                                 option.value = option.text;
+
+                                if (defaultSelectedText === setCountries[i]) option.selected = "selected";
+
                                 dropdown.add(option);
                             }
                         }

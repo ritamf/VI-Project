@@ -13,8 +13,7 @@ $(function () {
 
 // INTERACTION
 
-var selectedCountry = "Afghanistan";
-var selectedContinent = "Choose Continent";
+var selectedCountry = "Portugal";
 var selectedIndicator = "cases";
 var selectedCount = "Raw"; // second dropdown option: "Normalized"
 
