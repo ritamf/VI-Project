@@ -17,6 +17,7 @@ $(function () {
 var selectedCountry = "Afghanistan";
 var selectedContinent = "Choose Continent";
 var selectedIndicator = "cases";
+var selectedCount = "Normalized"; // second dropdown option: "Raw count"
 
 function preProcessCovidData(data) {
     
@@ -32,6 +33,8 @@ function preProcessCovidData(data) {
         d.week = week;
         d.week_string = weekToString(week);
         d.weekly_count = +d.weekly_count;
+        d.population = +d.population;
+        d.normalized = d.weekly_count / d.population;
         return d;
     });
 
@@ -98,17 +101,18 @@ function drawGraph() {
 }
 
 function draw(data) {
-
-    let title;
-    switch (selectedIndicator) {
-        case "cases":
-            title = "cases per 100,000 inhabitants"
-            break;
-        case "deaths":
-            title = "deaths per million inhabitants"
-            break;
-        default:
-            break;
+    // selectedCount == "Raw count"? d.weekly_count : d.normalized
+    let titleIndicator;
+    if (selectedIndicator == "cases") {
+        titleIndicator = "cases"
+        if (selectedCount == "Normalized") {
+            titleIndicator = titleIndicator + " per 100,000 inhabitants";
+        }
+    } else {
+        titleIndicator = "deaths";
+        if (selectedCount == "Normalized") {
+            titleIndicator = titleIndicator + " per million inhabitants";
+        }
     }
 
     svg.append("text")
@@ -117,7 +121,7 @@ function draw(data) {
         .attr("text-anchor", "middle")
         .style("font-size", "16px")
         .style("text-decoration", "underline")
-        .text("Number of " + title + " in " + selectedCountry);
+        .text("Number of " + titleIndicator + " in " + selectedCountry);
 
     data2020 = data.get(selectedCountry).get(selectedIndicator).get(2020);
     data2021 = data.get(selectedCountry).get(selectedIndicator).get(2021);
@@ -131,8 +135,8 @@ function draw(data) {
     var x_scale = d3.scalePoint()
         .range([margin, width - margin])
         .domain(week_nrs);
-    let y_max = d3.max([d3.max(data2020, d => d.weekly_count),
-                        d3.max(data2021, d => d.weekly_count)]);
+    let y_max = d3.max([d3.max(data2020, d => selectedCount == "Raw count"? d.weekly_count : d.normalized),
+                        d3.max(data2021, d => selectedCount == "Raw count"? d.weekly_count : d.normalized)]);
     var y_scale = d3.scaleLinear()
         .range([height - margin, margin])
         .domain([0, y_max])
@@ -142,7 +146,7 @@ function draw(data) {
         .data(data2020)
         .join("circle")
         .attr("cx", d => x_scale(d.week))
-        .attr("cy", d => y_scale(d.weekly_count))
+        .attr("cy", d => y_scale(selectedCount == "Raw count"? d.weekly_count : d.normalized))
         .attr("r", 3)
         .attr("class", "series2020");
 
@@ -150,7 +154,7 @@ function draw(data) {
         .data(data2021)
         .join("circle")
         .attr("cx", d => x_scale(d.week))
-        .attr("cy", d => y_scale(d.weekly_count))
+        .attr("cy", d => y_scale(selectedCount == "Raw count"? d.weekly_count : d.normalized))
         .attr("r", 3)
         .attr("class", "series2021");
 
@@ -184,7 +188,7 @@ function draw(data) {
 
     var line2020 = d3.line()
         .x((d, i) => x_scale(d.week))
-        .y(d => y_scale(d.weekly_count));
+        .y(d => y_scale(selectedCount == "Raw count"? d.weekly_count : d.normalized));
 
     svg.append("path")
         .attr("d", line2020(data2020))
@@ -192,7 +196,7 @@ function draw(data) {
 
     var line2021 = d3.line()
         .x((d, i) => x_scale(d.week))
-        .y(d => y_scale(d.weekly_count));
+        .y(d => y_scale(selectedCount == "Raw count"? d.weekly_count : d.normalized));
 
     svg.append("path")
         .attr("d", line2021(data2021))
@@ -332,6 +336,10 @@ function draw(data) {
         .attr("class", "count2021")
         .attr("style", "font-weight: normal;");
 
+    svg.on("mouseover", e => handleMouseOverEvent(e))
+        .on("mousemove", e => handleMouseOverEvent(e))
+        .on("mouseout", e => handleMouseOverEvent(e));
+
     function handleMouseOverEvent(e) {
 
         let mouse = d3.pointer(e),
@@ -348,14 +356,14 @@ function draw(data) {
 
     week_string = weekToString(week_nr);
     if (y2020.length != 0) {
-        weekly_count2020 = y2020[0].weekly_count;
+        weekly_count2020 = selectedCount == "Raw count"? y2020[0].weekly_count : y2020[0].normalized;
         y2020 = y_scale(weekly_count2020);
     } else {
         weekly_count2020 = "-";
         y2020 = y_scale(0);
     }
     if (y2021.length != 0) {
-        weekly_count2021 = y2021[0].weekly_count;
+        weekly_count2021 = selectedCount == "Raw count"? y2021[0].weekly_count : y2021[0].normalized;
         y2021 = y_scale(weekly_count2021);
     } else {
         weekly_count2021 = "-";
@@ -373,6 +381,15 @@ function draw(data) {
 
         if (relative_x >= 0 && relative_x <= width - margin * 2 &&
             relative_y >= 0 && relative_y <= height - margin * 2 ) {
+
+            if (selectedCount == "Normalized") {
+                if (weekly_count2020 != "-") {
+                    weekly_count2020 = weekly_count2020.toExponential(3);
+                }
+                if (weekly_count2021 != "-") {
+                    weekly_count2021 = weekly_count2021.toExponential(3);
+                }
+            }
 
             // fill datapoint label values, make it visible and move it to the right position
             datapoint_label
@@ -409,8 +426,4 @@ function draw(data) {
                 .attr("visibility", "hidden");
         }
     }
-        
-    svg.on("mouseover", e => handleMouseOverEvent(e))
-        .on("mousemove", e => handleMouseOverEvent(e))
-        .on("mouseout", e => handleMouseOverEvent(e));
 }
