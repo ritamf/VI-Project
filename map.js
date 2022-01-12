@@ -9,7 +9,7 @@ for (let i = 1; i <= 53; i++) {
     option = document.createElement('option');
     option.text = i; //weekToString(i);
     option.value = i;
-    if (i == 1) option.selected = "selected"; // default week number is selected here
+    if (i == 20) option.selected = "selected"; // default week number is selected here
     dropdownWeekNum.add(option);
 }
 
