@@ -7,19 +7,28 @@ d3.json("custom.geo.json")
 .then(geodata => {
     d3.json("cases_deaths.json")
     .then(covidData => {
-        console.log(geodata);
+        // console.log(geodata);
         let preProcessedCovidData = preProcessCovidData(covidData);
-        console.log(preProcessedCovidData);
+        // console.log(preProcessedCovidData);
         joinedFeatureArray = geodata.features.map(feature => {
             feature.properties.covid = preProcessedCovidData.get(feature.properties.adm0_a3_is)
             return feature});
-        console.log(joinedFeatureArray);
+        // console.log(joinedFeatureArray);
         draw(joinedFeatureArray);
     })
 })
 .catch( err => {console.log(err)});
 
 function draw(geo_data) {
+
+    var mouseOver = function (d) {
+        console.log(d.covidData);
+        d3.select("#countryCode").text("mouse over on" )
+    }
+    
+    let mouseLeave = function (d) {
+        d3.select("#countryCode").text("mouse over off")
+    }
 
     let margin = 75,
         width = 1400,
@@ -55,7 +64,9 @@ function draw(geo_data) {
                     console.log(data);
                     return colorScale(data.weekly_count);
                 }
-            });
+            })
+            .on("mouseover", mouseOver)
+            .on("mouseleave", mouseLeave);
 
 };
 
@@ -97,3 +108,4 @@ function weekToString(week_nr) {
     const dateFormat = { month: 'short', day: 'numeric' };
     return String(startDate.getDate()).padStart(2,"0") + "/" + String(startDate.getMonth() + 1).padStart(2,"0") + " - " + String(endDate.getDate()).padStart(2,"0") + "/" + String(endDate.getMonth() + 1).padStart(2,"0");
 }
+

@@ -17,7 +17,7 @@ colorScale = d3.scaleThreshold()
     .domain([100000, 1000000, 10000000, 30000000, 100000000, 500000000])
     .range(d3.schemeBlues[7]);
 
-//  zoom
+// zoom
 const zoom = d3.zoom()
     .scaleExtent([0.8, 8])
     .on('zoom', function () {
