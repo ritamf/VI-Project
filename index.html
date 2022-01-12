@@ -45,11 +45,32 @@
     <!-- Page Content-->
     <div class="container-fluid my-5">
         <h1>Map Plot</h1>
+
+        <select id="countDropdown" name="locality" onchange="setSelectedCount(this)">
+            <option value="Normalized" selected="selected">Normalized</option>
+            <option value="Raw">Raw</option>
+        </select> 
+        number of covid 
+        <select id="indicatorDropdown" name="locality" onchange="setSelectedIndicator(this)">
+            <option value="cases" selected="selected">cases</option>
+            <option value="deaths">deaths</option>
+        </select> 
+        for the week <select id="weekNumDropdown" name="locality" onchange="setSelectedWeekNum(this)">
+        </select> 
+        of the year 
+        <select id="yearDropdown" name="locality" onchange="setSelectedYear(this)">
+            <option value="2020" selected="selected">2020</option>
+            <option value="2020">2021</option>
+        </select>.
+
+        <br />
+        <br />
+
         <!-- Create an element where the map will take place -->
         <svg id="my_dataviz" width="600" height="400"></svg>
 
         <p>Hover the mouse over a country to see more information about it.</p>
-        
+
         <p id="countryCode"></p>
         <p id="country"></p>
         <p id="continent"></p>
@@ -64,6 +85,9 @@
             <p class="m-0 text-center text-white">Copyright &copy; VI Project - Visualize Covid Data 2021/2022</p>
         </div>
     </footer>
+
+    <!--jQuery-->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 
     <!-- Bootstrap core JS-->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
