@@ -1,8 +1,23 @@
-var dropdown_indicator = "cases";
-var dropdown_count = "Normalized" // other dropdown option: "Raw count"
-// var dropdown_count = "Raw count" // other dropdown option: "Raw count"
-var dropdown_year = 2021;
-var dropdown_week = 20;
+// ADD DROPDOWNS
+
+// note: indicator, raw_normalized and year dropdowns have already been created in index.html
+
+let dropdownWeekNum = document.getElementById('weekNumDropdown');
+dropdownWeekNum.length = 0;
+
+for (let i = 1; i <= 53; i++) {
+    option = document.createElement('option');
+    option.text = "#"+i; //weekToString(i);
+    option.value = i;
+    if (i == 1) option.selected = "selected"; // default week number is selected here
+    dropdownWeekNum.add(option);
+}
+
+
+var dropdown_indicator = document.getElementById("indicatorDropdown").value; // "cases" (default) or "deaths"
+var dropdown_count = document.getElementById("countDropdown").value; // "Normalized" (default) or "Raw"  
+var dropdown_year = +document.getElementById("yearDropdown").value; // "2020" (default) or "2021"
+var dropdown_week = +document.getElementById("weekNumDropdown").value; // week 1 (default) to 53
 
 var max_normalized = 0;
 var max_raw = 0;
@@ -57,11 +72,11 @@ console.log(data);
             .transition()
             .duration(200)
             .style("opacity", .5)
-            .style("stroke", "transparent")
+            .style("stroke", "grey")
         d3.select(this)
             .transition()
             .duration(200)
-            .style("opacity", 1)
+            .style("opacity", 2)
             .style("stroke", "black");
 
         let data_value = "-";
@@ -92,10 +107,9 @@ console.log(data);
         d3.select(this)
             .transition()
             .duration(200)
-            // .style("stroke", "transparent")
 
         d3.select("#countryCode").text("country: ");
-        d3.select("#country").text("cases: ");
+        d3.select("#country").text(dropdown_indicator + ": ");
 
     }
 
@@ -247,4 +261,33 @@ function weekToString(week_nr) {
     }
     const dateFormat = { month: 'short', day: 'numeric' };
     return String(startDate.getDate()).padStart(2,"0") + "/" + String(startDate.getMonth() + 1).padStart(2,"0") + " - " + String(endDate.getDate()).padStart(2,"0") + "/" + String(endDate.getMonth() + 1).padStart(2,"0");
+}
+
+
+
+
+// DROPDOWN  - SET SELECTED FUNCTIONS
+
+function setSelectedCount(dropdown) {
+    selectedCount = dropdown.options[dropdown.selectedIndex].text;
+    document.getElementsByTagName("svg")[0].innerHTML = "";
+    console.log("set " + selectedCount);
+}
+
+function setSelectedIndicator(dropdown) {
+    selectedIndicator = dropdown.options[dropdown.selectedIndex].text;
+    document.getElementsByTagName("svg")[0].innerHTML = "";
+    console.log("set " + selectedIndicator);
+}
+
+function setSelectedWeekNum(dropdown) {
+    selectedCountry = dropdown.options[dropdown.selectedIndex].text;
+    document.getElementsByTagName("svg")[0].innerHTML = "";
+    console.log("set " + selectedCountry);
+}
+
+function setSelectedYear(dropdown) {
+    selectedIndicator = dropdown.options[dropdown.selectedIndex].text;
+    document.getElementsByTagName("svg")[0].innerHTML = "";
+    console.log("set " + selectedIndicator);
 }
