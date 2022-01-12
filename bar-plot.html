@@ -43,12 +43,8 @@
   <div class="container-fluid my-5">
     <h1>Bar Plot</h1>
 
-    <!-- Add 2 buttons -->
-    <button onclick="update('population')">Population</button>
-    <button onclick="update('weekly_counts')">Weekly counts</button>
-
-    <!-- Create a div where the graph will take place -->
-    <div id="div-bar-plot"></div>
+    <!-- Create a svg where the graph will take place -->
+    <svg id="svg-bar-plot"></svg>
 
   </div>
 
@@ -69,7 +65,7 @@
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
 
   <!-- D3js -->
-  <script src="https://d3js.org/d3.v4.js"></script>
+  <script src="https://d3js.org/d3.v6.min.js"></script>
   
 
   <script src="dbp.js"></script>
