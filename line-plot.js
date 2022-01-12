@@ -100,7 +100,7 @@ function drawGraph() {
 }
 
 function draw(data) {
-    // selectedCount == "Raw"? d.weekly_count : d.normalized
+    
     let titleIndicator;
     if (selectedIndicator == "cases") {
         titleIndicator = "cases"
@@ -124,6 +124,13 @@ function draw(data) {
 
     data2020 = data.get(selectedCountry).get(selectedIndicator).get(2020);
     data2021 = data.get(selectedCountry).get(selectedIndicator).get(2021);
+
+    if (data2020 == undefined) {
+        data2020 = [];
+    }
+    if (data2021 == undefined) {
+        data2021 = [];
+    }
     
     var x_linear_scale = d3.scaleLinear()
         .range([margin, width - margin])
@@ -134,6 +141,7 @@ function draw(data) {
     var x_scale = d3.scalePoint()
         .range([margin, width - margin])
         .domain(week_nrs);
+
     let y_max = d3.max([d3.max(data2020, d => selectedCount == "Raw"? d.weekly_count : d.normalized),
                         d3.max(data2021, d => selectedCount == "Raw"? d.weekly_count : d.normalized)]);
     var y_scale = d3.scaleLinear()
@@ -160,17 +168,22 @@ function draw(data) {
     var x_axis = d3.axisBottom(x_scale);
 
     let tick_labels = [""];
-    for (let i = 1; i < data2020.length; i++) {
-        if (data2020[i - 1].year_week.getMonth() == data2020[i].year_week.getMonth()) {
+    for (let i = 1; i < 53; i++) {
+        previousDateDayNr = 1 + (i - 1) * 7;
+        previousDate = new Date(year, 0, previousDateDayNr);
+        currentDateDayNr = 1 + (i) * 7;
+        currentDate = new Date(year, 0, currentDateDayNr);
+        if (previousDate.getMonth() == currentDate.getMonth()) {
             tick_labels.push("");
         } else {
-            if (data2020[i - 1].year_week.getFullYear() == data2020[i].year_week.getFullYear()) {
-                tick_labels.push(d3.timeFormat('%b')(data2020[i].year_week));
+            if (previousDate.getFullYear() == currentDate.getFullYear()) {
+                tick_labels.push(d3.timeFormat('%b')(currentDate));
             } else {
-                tick_labels.push(d3.timeFormat('%Y')(data2020[i].year_week));
+                tick_labels.push(d3.timeFormat('%Y')(currentDate));
             }
         }
     }
+    
 
     x_axis.tickFormat((date, i) => tick_labels[i]);
 
