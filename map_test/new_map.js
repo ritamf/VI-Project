@@ -23,7 +23,7 @@ function draw(geo_data) {
 
     let mouseOver = function (e, d) {
         console.log(d);
-        let data_value;
+        let data_value = "-";
         if (d.properties.covid != undefined) {
             if (d.properties.covid.get(dropdown_indicator).get(dropdown_year).get(dropdown_week) != undefined) {
                 if (dropdown_count == "Normalized") {
@@ -31,11 +31,7 @@ function draw(geo_data) {
                 } else {
                     data_value = d.properties.covid.get(dropdown_indicator).get(dropdown_year).get(dropdown_week)[0].weekly_count;
                 }
-            } else {
-                data_value = "-";
             }
-        } else {
-            data_value = "-";
         }
         d3.select("#countryCode").text(data_value);
     }
@@ -52,7 +48,7 @@ function draw(geo_data) {
         .attr("width", width)
         .attr("height", height);
 
-    const zoom = d3.zoom()
+    const zoomed = d3.zoom()
         .scaleExtent([0.8, 8])
         .on('zoom', function () {
             svg
@@ -60,7 +56,7 @@ function draw(geo_data) {
                 .attr('transform', d3.event.transform);
         });
     
-    svg.call(zoom);
+    svg.call(zoomed);
 
     let map = svg.append("g")
         .attr('class', 'map');
@@ -80,19 +76,17 @@ function draw(geo_data) {
                 // console.log(feature.properties.covid.get(dropdown_indicator) == undefined);
                 return path(feature)})
             .attr("fill", feature => {
+                let data_value = "black";
                 if (feature.properties.covid != undefined) {
                     if (feature.properties.covid.get(dropdown_indicator).get(dropdown_year).get(dropdown_week) != undefined) {
                         if (dropdown_count == "Normalized") {
-                            return colorScale(feature.properties.covid.get(dropdown_indicator).get(dropdown_year).get(dropdown_week)[0].normalized);
+                            data_value = colorScale(feature.properties.covid.get(dropdown_indicator).get(dropdown_year).get(dropdown_week)[0].normalized);
                         } else {
-                            return colorScale(feature.properties.covid.get(dropdown_indicator).get(dropdown_year).get(dropdown_week)[0].weekly_count);
+                            data_value = colorScale(feature.properties.covid.get(dropdown_indicator).get(dropdown_year).get(dropdown_week)[0].weekly_count);
                         }
-                    } else {
-                        return "black";
                     }
-                } else {
-                    return "black";
                 }
+                return data_value;
             })
             .on("mouseover", (d,e) => mouseOver(d,e))
             .on("mouseleave", (d,e) => mouseLeave(d,e));
