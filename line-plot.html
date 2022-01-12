@@ -88,11 +88,13 @@
     <div class="container-fluid my-5">
         <h1>Line Plot</h1>
         
-        <select id="country-dropdown" name="locality" onchange="setSelectedCountry(this)">
-        </select>
-        <select id="country-dropdownIndicator" name="locality" onchange="setSelectedIndicator(this)">
-        </select>
-        <select id="country-dropdownCount" name="locality" onchange="setSelectedCount(this)">
+        Region: <select id="country-dropdown" name="locality" onchange="setSelectedCountry(this)">
+        </select> &emsp; &emsp;
+
+        Indicator: <select id="country-dropdownIndicator" name="locality" onchange="setSelectedIndicator(this)">
+        </select> &emsp; &emsp;
+        
+        Type of processed data: <select id="country-dropdownCount" name="locality" onchange="setSelectedCount(this)">
             <option value="Normalized">Normalized</option>
             <option value="Raw" selected="selected">Raw</option>
         </select>
