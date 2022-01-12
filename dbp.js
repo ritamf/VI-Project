@@ -16,8 +16,10 @@ var svg = d3.select("#div-bar-plot")
 var x = d3.scaleBand()
     .range([0, width])
     .padding(0.2);
+
 var xAxis = svg.append("g")
     .attr("transform", "translate(0," + height + ")")
+
 
 // Initialize the Y axis
 var y = d3.scaleLinear()
@@ -32,15 +34,15 @@ function update(selectedVar) {
     // Parse the Data
     d3.csv("datasets/cases_deaths/cases_deaths.csv", function (data) {
 
-        data = data.filter(d => ["Portugal", "China", "Russia", "United Kingdom", "Brasil"].includes(d.country))
+        data = data.filter(function (d) { return d.continent == "Europe" }) 
 
-        data = data.map(function(d) {
+        data = data.map(function (d) {
             return {
-              country: d.country,
-              population: d.population,
-              weekly_counts: d.weekly_counts
+                country: d.country,
+                population: d.population,
+                weekly_counts: d.weekly_counts
             }
-          });
+        });
 
         // X axis
         x.domain(data.map(function (d) { console.log(data); return d.country; }))
@@ -49,7 +51,7 @@ function update(selectedVar) {
         // Add Y axis
         y.domain([0, d3.max(data, function (d) { return +d[selectedVar] })]);
         yAxis.transition().duration(1000).call(d3.axisLeft(y));
-        
+
         // variable u: map data to existing bars
         var u = svg.selectAll("rect")
             .data(data)
@@ -65,7 +67,7 @@ function update(selectedVar) {
             .attr("y", function (d) { return y(d[selectedVar]); })
             .attr("width", x.bandwidth())
             .attr("height", function (d) { return height - y(d[selectedVar]); })
-            .attr("fill", "#69b3a2")
+            .attr("fill", "#69b3a2");
     })
 
 }
