@@ -14,7 +14,7 @@ $(function () {
 
 // INTERACTION
 
-var selectedCountry = "Portugal";
+var selectedCountry = "Afghanistan";
 var selectedContinent = "Choose Continent";
 var selectedIndicator = "cases";
 
@@ -36,7 +36,7 @@ function preProcessCovidData(data) {
     });
 
     groupedData = d3.group(preProcessedData,
-        group1 => group1.country,
+        group1 => group1.country.replace("total", "total continent"),
         group2 => group2.indicator,
         group3 => group3.year);
 

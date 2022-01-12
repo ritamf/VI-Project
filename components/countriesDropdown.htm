@@ -13,7 +13,7 @@
         dropdown.length = 0;
 
         let defaultOption = document.createElement('option');
-        defaultOption.text = 'Portugal';
+        defaultOption.text = 'Afghanistan';
 
         dropdown.add(defaultOption);
         dropdown.selectedIndex = 0;
@@ -46,16 +46,16 @@
                         let option;
 
                         for (let i = 0; i < setCountries.length; i++) {
-                            if (!setCountries[i].includes("(total)")) {
+                            if (!setCountries[i].includes("(total)")) { // countries
                                 option = document.createElement('option');
-                                option.text = setCountries[i];
-                                option.value = setCountries[i];
+                                option.text = setCountries[i]
+                                option.value = setCountries[i]
                                 dropdown.add(option);
 
-                            } else { // countries (not including default country)
+                            } else { // continents
                                 option = document.createElement('option');
-                                option.text = setCountries[i];
-                                option.value = setCountries[i];
+                                option.text = setCountries[i].replace("total", "total continent");
+                                option.value = option.text;
                                 dropdown.add(option);
                             }
                         }

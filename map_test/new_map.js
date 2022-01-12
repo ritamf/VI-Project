@@ -22,7 +22,7 @@ d3.json("custom.geo.json")
 function draw(geo_data) {
 
     var mouseOver = function (d) {
-        console.log(d.covidData);
+        console.log(d.covidData.country);
         d3.select("#countryCode").text("mouse over on" )
     }
     
