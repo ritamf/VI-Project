@@ -30,7 +30,9 @@ var yAxis = svg.append("g")
 function update(selectedVar) {
 
     // Parse the Data
-    d3.csv("datasets/cases_deaths/cases_deaths_sample.csv", function (data) {
+    d3.csv("datasets/cases_deaths/cases_deaths.csv", function (data) {
+
+        data = data.filter(d => ["Portugal", "China", "Russia", "United Kingdom", "Brasil"].includes(d.country))
 
         data = data.map(function(d) {
             return {
