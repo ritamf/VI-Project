@@ -9,15 +9,15 @@ for (let i = 1; i <= 53; i++) {
     option = document.createElement('option');
     option.text = "#"+i; //weekToString(i);
     option.value = i;
-    if (i==7) option.selected = "selected";
+    if (i == 1) option.selected = "selected"; // default week number is selected here
     dropdownWeekNum.add(option);
 }
 
 
-var dropdown_indicator = "deaths"// document.getElementById("indicatorDropdown").value;
-var dropdown_count = "Raw"// document.getElementById("countDropdown").value; // other dropdown option: "Raw count"
-var dropdown_year = +document.getElementById("yearDropdown").value;
-var dropdown_week = +document.getElementById("weekNumDropdown").value;
+var dropdown_indicator = document.getElementById("indicatorDropdown").value; // "cases" (default) or "deaths"
+var dropdown_count = document.getElementById("countDropdown").value; // "Normalized" (default) or "Raw"  
+var dropdown_year = +document.getElementById("yearDropdown").value; // "2020" (default) or "2021"
+var dropdown_week = +document.getElementById("weekNumDropdown").value; // week 1 (default) to 53
 
 var max_normalized = 0;
 var max_raw = 0;
