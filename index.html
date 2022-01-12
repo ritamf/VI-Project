@@ -48,7 +48,7 @@
 
         <select id="countDropdown" name="locality" onchange="setSelectedCount(this)">
             <option value="Normalized" selected="selected">Normalized</option>
-            <option value="Raw">Raw</option>
+            <option value="Raw">Raw count</option>
         </select> 
         number of covid 
         <select id="indicatorDropdown" name="locality" onchange="setSelectedIndicator(this)">
@@ -70,6 +70,7 @@
         <svg id="my_dataviz" width="600" height="400"></svg>
 
         <p>Hover the mouse over a country to see more information about it.</p>
+        <p>Click to pan and mouse wheel to zoom.</p>
 
         <p id="countryCode"></p>
         <p id="country"></p>

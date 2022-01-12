@@ -7,7 +7,7 @@ dropdownWeekNum.length = 0;
 
 for (let i = 1; i <= 53; i++) {
     option = document.createElement('option');
-    option.text = "#"+i; //weekToString(i);
+    option.text = i; //weekToString(i);
     option.value = i;
     if (i == 1) option.selected = "selected"; // default week number is selected here
     dropdownWeekNum.add(option);
@@ -18,6 +18,10 @@ var dropdown_indicator = document.getElementById("indicatorDropdown").value; // 
 var dropdown_count = document.getElementById("countDropdown").value; // "Normalized" (default) or "Raw"  
 var dropdown_year = +document.getElementById("yearDropdown").value; // "2020" (default) or "2021"
 var dropdown_week = +document.getElementById("weekNumDropdown").value; // week 1 (default) to 53
+// var dropdown_indicator = "cases";
+// var dropdown_count = "Normalized";
+// var dropdown_year = 2021;
+// var dropdown_week = 30;
 
 var max_normalized = 0;
 var max_raw = 0;
@@ -35,7 +39,6 @@ var projection = d3.geoMercator()
     .translate([width / 2, height / 2]);
 
 colorScale = d3.scaleLinear()
-    .domain([0, dropdown_count == "Raw count"? 10000: 0.001])
     .range(["white", "red"]);
 
 // zoom
@@ -49,24 +52,30 @@ const zoom = d3.zoom()
 
 svg.call(zoom);
 
+updateGraph();
+
+function updateGraph() {
+console.log(dropdown_indicator,dropdown_count,dropdown_year,dropdown_week);
+
 d3.json("https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/world.geojson")
 .then(geodata => {
     d3.json("datasets/cases_deaths/cases_deaths.json")
     .then(covidData => {
         let preProcessedCovidData = preProcessCovidData(covidData);
-        console.log(preProcessedCovidData);
+        // console.log(preProcessedCovidData);
         joinedFeatureArray = geodata.features.map(feature => {
             feature.covid = preProcessedCovidData.get(feature.id)
             return feature});
-        console.log(joinedFeatureArray);
-        console.log(max_normalized, max_raw);
+        // console.log(joinedFeatureArray);
+        // console.log(max_normalized, max_raw);
         draw(joinedFeatureArray);
     })
 })
 .catch( err => {console.log(err)});
+}
 
 function draw(data) {
-console.log(data);
+
     let mouseOver = function (e, d) {
         d3.selectAll(".Country")
             .transition()
@@ -134,6 +143,9 @@ console.log(data);
         .style("text-decoration", "underline")
         .text("Number of " + titleIndicator + " in week " + weekToString(dropdown_week) + " of " + dropdown_year);
 
+    colorScale
+        .domain([0, dropdown_count == "Raw count"? 100000: 0.01]);
+
     // Draw the map
     svg.append("g")
         .selectAll("path")
@@ -148,6 +160,7 @@ console.log(data);
         .attr("fill", feature => {
             let data_value = "black";
             if (feature.covid != undefined) {
+                // console.log(feature.covid.get(dropdown_indicator));
                 if (feature.covid.get(dropdown_indicator).get(dropdown_year).get(dropdown_week) != undefined) {
                     if (dropdown_count == "Normalized") {
                         data_value = colorScale(feature.covid.get(dropdown_indicator).get(dropdown_year).get(dropdown_week)[0].normalized);
@@ -269,25 +282,29 @@ function weekToString(week_nr) {
 // DROPDOWN  - SET SELECTED FUNCTIONS
 
 function setSelectedCount(dropdown) {
-    selectedCount = dropdown.options[dropdown.selectedIndex].text;
+    dropdown_count = dropdown.options[dropdown.selectedIndex].text;
     document.getElementsByTagName("svg")[0].innerHTML = "";
-    console.log("set " + selectedCount);
+    console.log("set " + dropdown_count);
+    updateGraph();
 }
 
 function setSelectedIndicator(dropdown) {
-    selectedIndicator = dropdown.options[dropdown.selectedIndex].text;
+    dropdown_indicator = dropdown.options[dropdown.selectedIndex].text;
     document.getElementsByTagName("svg")[0].innerHTML = "";
-    console.log("set " + selectedIndicator);
+    console.log("set " + dropdown_indicator);
+    updateGraph();
 }
 
 function setSelectedWeekNum(dropdown) {
-    selectedCountry = dropdown.options[dropdown.selectedIndex].text;
+    dropdown_week = +dropdown.options[dropdown.selectedIndex].text;
     document.getElementsByTagName("svg")[0].innerHTML = "";
-    console.log("set " + selectedCountry);
+    console.log("set " + dropdown_week);
+    updateGraph();
 }
 
 function setSelectedYear(dropdown) {
-    selectedIndicator = dropdown.options[dropdown.selectedIndex].text;
+    dropdown_year = +dropdown.options[dropdown.selectedIndex].text;
     document.getElementsByTagName("svg")[0].innerHTML = "";
-    console.log("set " + selectedIndicator);
+    console.log("set " + dropdown_year);
+    updateGraph();
 }
