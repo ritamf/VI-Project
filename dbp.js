@@ -29,12 +29,12 @@ var yAxis = svg.append("g")
 
 
 // A function that create / update the plot for a given variable:
-function update(selectedVar) {
+function update(selectedVar, selectedContinent) {
 
     // Parse the Data
     d3.csv("datasets/cases_deaths/cases_deaths.csv", function (data) {
 
-        data = data.filter(function (d) { return d.continent == "Europe" }) 
+        data = data.filter(function (d) { return d.continent == selectedContinent }) 
 
         data = data.map(function (d) {
             return {
@@ -73,4 +73,4 @@ function update(selectedVar) {
 }
 
 // Initialize plot
-update('population')
+update('population', 'Europe')
