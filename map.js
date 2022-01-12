@@ -1,6 +1,6 @@
 var dropdown_indicator = "cases";
-// var dropdown_count = "Normalized" // other dropdown option: "Raw count"
-var dropdown_count = "Raw count" // other dropdown option: "Raw count"
+var dropdown_count = "Normalized" // other dropdown option: "Raw count"
+// var dropdown_count = "Raw count" // other dropdown option: "Raw count"
 var dropdown_year = 2021;
 var dropdown_week = 20;
 
@@ -28,8 +28,8 @@ const zoom = d3.zoom()
     .scaleExtent([0.8, 8])
     .on('zoom', function (e) {
         svg
-            .selectAll('path') // To prevent stroke width from scaling
-            .attr('transform', e.transform);
+            .selectAll('path')
+                .attr('transform', e.transform);
     });
 
 svg.call(zoom);
@@ -79,31 +79,46 @@ console.log(data);
         d3.select("#country").text(e => {
             return dropdown_indicator + ": " + data_value;
         });
-
-        // if (data.get(d.id)[2] != undefined) d3.select("#continent").text("continent: " + data.get(d.id)[2]);
-        // if (data.get(d.id)[3] != undefined) d3.select("#population").text("population: " + data.get(d.id)[3]);
     }
 
     let mouseLeave = function (e, d) {
         d3.selectAll(".Country")
             .transition()
             .duration(200)
-            .style("opacity", .8)
-            // .style("stroke", "transparent")
+            .style("opacity", 1)
             .style("stroke", "black")
-            .style("stroke-width", 1)
+            .style("stroke-width", 0.2)
 
         d3.select(this)
             .transition()
             .duration(200)
-            .style("stroke", "transparent")
+            // .style("stroke", "transparent")
 
         d3.select("#countryCode").text("country: ");
         d3.select("#country").text("cases: ");
-        // d3.select("#continent").text("continent: ");
-        // d3.select("#population").text("population: ");
 
     }
+
+    let titleIndicator;
+    if (dropdown_indicator == "cases") {
+        titleIndicator = "cases"
+        if (dropdown_count == "Normalized") {
+            titleIndicator = titleIndicator + " per 100,000 inhabitants";
+        }
+    } else {
+        titleIndicator = "deaths";
+        if (dropdown_count == "Normalized") {
+            titleIndicator = titleIndicator + " per million inhabitants";
+        }
+    }
+
+    svg.append("text")
+        .attr("x", 300)
+        .attr("y", 20)
+        .attr("text-anchor", "middle")
+        .style("font-size", "16px")
+        .style("text-decoration", "underline")
+        .text("Number of " + titleIndicator + " in week " + weekToString(dropdown_week) + " of " + dropdown_year);
 
     // Draw the map
     svg.append("g")
@@ -129,12 +144,61 @@ console.log(data);
             }
             return data_value;
         })
-            .style("stroke-width", 1)
+            .style("stroke-width", 0.2)
             .style("stroke", "black")
         .attr("class", "Country")
-        .style("opacity", .8)
         .on("mouseover", mouseOver)
         .on("mouseleave", mouseLeave)
+
+    // create legend
+    let legend = svg.append("g")
+        .attr("class", "legend");
+    let gradient = legend.append("linearGradient")
+        .attr("id", "svgGradient")
+        .attr("x1", "0%")
+        .attr("x2", "0%")
+        .attr("y1", "0%")
+        .attr("y2", "100%");
+    gradient.append("stop")
+        .attr("class", "start")
+        .attr("offset", "0%")
+        .attr("stop-color", "red")
+        .attr("stop-opacity", 1);
+    gradient.append("stop")
+        .attr("class", "end")
+        .attr("offset", "100%")
+        .attr("stop-color", "white")
+        .attr("stop-opacity", 1);
+
+    let legend_x_position = 30, legend_y_position = 50, legend_width = 20,
+        legend_height = 100, legend_margin = 10, legend_text_offset = 10;
+
+    legend.append("rect")
+        .attr("x", legend_x_position - legend_width)
+        .attr("y", legend_y_position - legend_margin * 2)
+        .attr("width", legend_width * 3)
+        .attr("height", legend_height + 2 * legend_margin * 2)
+        .attr("stroke", "black")
+        .attr("fill", "white");
+
+    legend.append("rect")
+        .attr("x", legend_x_position)
+        .attr("y", legend_y_position)
+        .attr("width", legend_width)
+        .attr("height", legend_height)
+        .attr("fill", "url(#svgGradient)");
+    
+    legend.append("text")
+        .text(colorScale.domain()[1])
+        .attr("x", legend_x_position + legend_width / 2)
+        .attr("y", legend_y_position - legend_text_offset)
+        .attr("style", "text-anchor:middle;dominant-baseline:middle;");
+
+    legend.append("text")
+        .text(colorScale.domain()[0])
+        .attr("x", legend_x_position + legend_width / 2)
+        .attr("y", legend_y_position + legend_height + legend_text_offset)
+        .attr("style", "text-anchor:middle;dominant-baseline:middle;");
 
 }
 
