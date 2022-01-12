@@ -26,10 +26,10 @@ colorScale = d3.scaleLinear()
 // zoom
 const zoom = d3.zoom()
     .scaleExtent([0.8, 8])
-    .on('zoom', function () {
+    .on('zoom', function (e) {
         svg
             .selectAll('path') // To prevent stroke width from scaling
-            .attr('transform', d3.event.transform);
+            .attr('transform', e.transform);
     });
 
 svg.call(zoom);
@@ -89,15 +89,17 @@ console.log(data);
             .transition()
             .duration(200)
             .style("opacity", .8)
-            .style("stroke", "transparent")
+            // .style("stroke", "transparent")
+            .style("stroke", "black")
+            .style("stroke-width", 1)
 
         d3.select(this)
             .transition()
             .duration(200)
             .style("stroke", "transparent")
 
-        d3.select("#countryCode").text("country code: ");
-        d3.select("#country").text("country: ");
+        d3.select("#countryCode").text("country: ");
+        d3.select("#country").text("cases: ");
         // d3.select("#continent").text("continent: ");
         // d3.select("#population").text("population: ");
 
@@ -127,7 +129,8 @@ console.log(data);
             }
             return data_value;
         })
-        .style("stroke", "transparent")
+            .style("stroke-width", 1)
+            .style("stroke", "black")
         .attr("class", "Country")
         .style("opacity", .8)
         .on("mouseover", mouseOver)
