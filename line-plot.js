@@ -5,19 +5,18 @@ $(function () {
 });
 
 $(function () {
-    $("#continents-dropdown").load("components/continentsDropdown.htm");
-});
-
-$(function () {
     $("#country-dropdownIndicator").load("components/indicatorDropdown.htm");
 });
+
+// country-dropdownCount is already in line.plot.html
+
 
 // INTERACTION
 
 var selectedCountry = "Afghanistan";
 var selectedContinent = "Choose Continent";
 var selectedIndicator = "cases";
-var selectedCount = "Normalized"; // second dropdown option: "Raw count"
+var selectedCount = "Raw"; // second dropdown option: "Normalized"
 
 function preProcessCovidData(data) {
     
@@ -66,18 +65,18 @@ function setSelectedCountry(dropdown) {
     console.log("set " + selectedCountry);
 }
 
-function setSelectedContinent(dropdown) {
-    selectedContinent = dropdown.options[dropdown.selectedIndex].text;
-    document.getElementsByTagName("svg")[0].innerHTML = "";
-    drawGraph();
-    console.log("set " + selectedContinent);
-}
-
 function setSelectedIndicator(dropdown) {
     selectedIndicator = dropdown.options[dropdown.selectedIndex].text;
     document.getElementsByTagName("svg")[0].innerHTML = "";
     drawGraph();
     console.log("set " + selectedIndicator);
+}
+
+function setSelectedCount(dropdown) {
+    selectedCount = dropdown.options[dropdown.selectedIndex].text;
+    document.getElementsByTagName("svg")[0].innerHTML = "";
+    drawGraph();
+    console.log("set " + selectedCount);
 }
 
 // VISUALIZATION LINE PLOT
@@ -101,7 +100,7 @@ function drawGraph() {
 }
 
 function draw(data) {
-    // selectedCount == "Raw count"? d.weekly_count : d.normalized
+    // selectedCount == "Raw"? d.weekly_count : d.normalized
     let titleIndicator;
     if (selectedIndicator == "cases") {
         titleIndicator = "cases"
@@ -121,7 +120,7 @@ function draw(data) {
         .attr("text-anchor", "middle")
         .style("font-size", "16px")
         .style("text-decoration", "underline")
-        .text("Number of " + titleIndicator + " in " + selectedCountry);
+        .text("Number of " + titleIndicator + " in " + selectedCountry.replace("(total continent)",""));
 
     data2020 = data.get(selectedCountry).get(selectedIndicator).get(2020);
     data2021 = data.get(selectedCountry).get(selectedIndicator).get(2021);
@@ -135,8 +134,8 @@ function draw(data) {
     var x_scale = d3.scalePoint()
         .range([margin, width - margin])
         .domain(week_nrs);
-    let y_max = d3.max([d3.max(data2020, d => selectedCount == "Raw count"? d.weekly_count : d.normalized),
-                        d3.max(data2021, d => selectedCount == "Raw count"? d.weekly_count : d.normalized)]);
+    let y_max = d3.max([d3.max(data2020, d => selectedCount == "Raw"? d.weekly_count : d.normalized),
+                        d3.max(data2021, d => selectedCount == "Raw"? d.weekly_count : d.normalized)]);
     var y_scale = d3.scaleLinear()
         .range([height - margin, margin])
         .domain([0, y_max])
@@ -146,7 +145,7 @@ function draw(data) {
         .data(data2020)
         .join("circle")
         .attr("cx", d => x_scale(d.week))
-        .attr("cy", d => y_scale(selectedCount == "Raw count"? d.weekly_count : d.normalized))
+        .attr("cy", d => y_scale(selectedCount == "Raw"? d.weekly_count : d.normalized))
         .attr("r", 3)
         .attr("class", "series2020");
 
@@ -154,7 +153,7 @@ function draw(data) {
         .data(data2021)
         .join("circle")
         .attr("cx", d => x_scale(d.week))
-        .attr("cy", d => y_scale(selectedCount == "Raw count"? d.weekly_count : d.normalized))
+        .attr("cy", d => y_scale(selectedCount == "Raw"? d.weekly_count : d.normalized))
         .attr("r", 3)
         .attr("class", "series2021");
 
@@ -188,7 +187,7 @@ function draw(data) {
 
     var line2020 = d3.line()
         .x((d, i) => x_scale(d.week))
-        .y(d => y_scale(selectedCount == "Raw count"? d.weekly_count : d.normalized));
+        .y(d => y_scale(selectedCount == "Raw"? d.weekly_count : d.normalized));
 
     svg.append("path")
         .attr("d", line2020(data2020))
@@ -196,7 +195,7 @@ function draw(data) {
 
     var line2021 = d3.line()
         .x((d, i) => x_scale(d.week))
-        .y(d => y_scale(selectedCount == "Raw count"? d.weekly_count : d.normalized));
+        .y(d => y_scale(selectedCount == "Raw"? d.weekly_count : d.normalized));
 
     svg.append("path")
         .attr("d", line2021(data2021))
@@ -356,14 +355,14 @@ function draw(data) {
 
     week_string = weekToString(week_nr);
     if (y2020.length != 0) {
-        weekly_count2020 = selectedCount == "Raw count"? y2020[0].weekly_count : y2020[0].normalized;
+        weekly_count2020 = selectedCount == "Raw"? y2020[0].weekly_count : y2020[0].normalized;
         y2020 = y_scale(weekly_count2020);
     } else {
         weekly_count2020 = "-";
         y2020 = y_scale(0);
     }
     if (y2021.length != 0) {
-        weekly_count2021 = selectedCount == "Raw count"? y2021[0].weekly_count : y2021[0].normalized;
+        weekly_count2021 = selectedCount == "Raw"? y2021[0].weekly_count : y2021[0].normalized;
         y2021 = y_scale(weekly_count2021);
     } else {
         weekly_count2021 = "-";
