@@ -46,22 +46,23 @@
     <div class="container-fluid my-5">
         <h1>Map Plot</h1>
 
-        <select id="countDropdown" name="locality" onchange="setSelectedCount(this)">
+        Year: <select id="yearDropdown" name="locality" onchange="setSelectedYear(this)">
+            <option value="2020" selected="selected">2020</option>
+            <option value="2020">2021</option>
+        </select> &emsp; &emsp;
+ 
+        Week number: <select id="weekNumDropdown" name="locality" onchange="setSelectedWeekNum(this)">
+        </select> &emsp; &emsp;
+
+        Indicator: <select id="indicatorDropdown" name="locality" onchange="setSelectedIndicator(this)">
+            <option value="cases" selected="selected">cases</option>
+            <option value="deaths">deaths</option>
+        </select> &emsp; &emsp;
+
+        Type of processed data: <select id="countDropdown" name="locality" onchange="setSelectedCount(this)">
             <option value="Normalized" selected="selected">Normalized</option>
             <option value="Raw">Raw count</option>
         </select> 
-        number of covid 
-        <select id="indicatorDropdown" name="locality" onchange="setSelectedIndicator(this)">
-            <option value="cases" selected="selected">cases</option>
-            <option value="deaths">deaths</option>
-        </select> 
-        for the week <select id="weekNumDropdown" name="locality" onchange="setSelectedWeekNum(this)">
-        </select> 
-        of the year 
-        <select id="yearDropdown" name="locality" onchange="setSelectedYear(this)">
-            <option value="2020" selected="selected">2020</option>
-            <option value="2020">2021</option>
-        </select>.
 
         <br />
         <br />
