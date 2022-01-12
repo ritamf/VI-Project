@@ -3,13 +3,13 @@ var dropdown_count = "Normalized" // other dropdown option: "Raw count"
 var dropdown_year = 2021;
 var dropdown_week = 20;
 
-d3.json("custom.geo.json")
-.then(geodata => {
+d3.json("https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/world.geojson")
+.then(geodata => {console.log(geodata);
     d3.json("cases_deaths.json")
     .then(covidData => {
         // console.log(geodata);
         let preProcessedCovidData = preProcessCovidData(covidData);
-        // console.log(preProcessedCovidData);
+        console.log(preProcessedCovidData);
         joinedFeatureArray = geodata.features.map(feature => {
             feature.properties.covid = preProcessedCovidData.get(feature.properties.adm0_a3_is)
             return feature});
