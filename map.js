@@ -18,10 +18,6 @@ var dropdown_indicator = document.getElementById("indicatorDropdown").value; // 
 var dropdown_count = document.getElementById("countDropdown").value; // "Normalized" (default) or "Raw"  
 var dropdown_year = +document.getElementById("yearDropdown").value; // "2020" (default) or "2021"
 var dropdown_week = +document.getElementById("weekNumDropdown").value; // week 1 (default) to 53
-// var dropdown_indicator = "cases";
-// var dropdown_count = "Normalized";
-// var dropdown_year = 2021;
-// var dropdown_week = 30;
 
 var max_normalized = -1;
 var max_raw = -1;
