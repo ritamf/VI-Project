@@ -17,11 +17,11 @@ for (let i = 1; i <= 53; i++) {
     dropdownWeekNum.add(option);
 }
 
-var dropdown_continent = "Africa"//document.getElementById("continentDropdown").value;
-var dropdown_indicator = "cases"//document.getElementById("indicatorDropdown").value;
-var dropdown_count = "Raw"//document.getElementById("country-dropdownCount").value; // other dropdown option: "Raw count"
-var dropdown_year = 2021//document.getElementById("yearDropdown").value;
-var dropdown_week = 20//document.getElementById("weekNumDropdown").value;
+var dropdown_continent = "Africa";// document.getElementById("continentDropdown").value;
+var dropdown_indicator = "cases"; // document.getElementById("indicatorDropdown").value;
+var dropdown_count = "Raw"; // document.getElementById("country-dropdownCount").value; // other dropdown option: "Raw count"
+var dropdown_year = 2021; // document.getElementById("yearDropdown").value;
+var dropdown_week = 4; // document.getElementById("weekNumDropdown").value;
 
 // set the dimensions and margins of the graph
 var margin = {top: 20, right: 20, bottom: 140, left: 100},
@@ -154,9 +154,9 @@ function weekToString(week_nr) {
 // DROPDOWN  - SET SELECTED FUNCTIONS
 
 function setSelectedContinent(dropdown) {
-    selectedContinent = dropdown.options[dropdown.selectedIndex].text;
+    selectedCont = dropdown.options[dropdown.selectedIndex].text;
     document.getElementsByTagName("svg")[0].innerHTML = "";
-    console.log("set " + selectedContinent);
+    console.log("set " + selectedCont);
 }
 
 function setSelectedIndicator(dropdown) {
@@ -165,20 +165,20 @@ function setSelectedIndicator(dropdown) {
     console.log("set " + selectedIndicator);
 }
 
-function setSelectedCount(dropdown) {
-    selectedCount = dropdown.options[dropdown.selectedIndex].text;
-    document.getElementsByTagName("svg")[0].innerHTML = "";
-    console.log("set " + selectedCount);
-}
-
-function setSelectedYear(dropdown) {
-    selectedYear = dropdown.options[dropdown.selectedIndex].text;
-    document.getElementsByTagName("svg")[0].innerHTML = "";
-    console.log("set " + selectedYear);
-}
-
 function setSelectedWeekNum(dropdown) {
     selectedCountry = dropdown.options[dropdown.selectedIndex].text;
     document.getElementsByTagName("svg")[0].innerHTML = "";
     console.log("set " + selectedCountry);
+}
+
+function setSelectedYear(dropdown) {
+    selectedIndicator = dropdown.options[dropdown.selectedIndex].text;
+    document.getElementsByTagName("svg")[0].innerHTML = "";
+    console.log("set " + selectedIndicator);
+}
+
+function setSelectedCount(dropdown) {
+    selectedIndicator = dropdown.options[dropdown.selectedIndex].text;
+    document.getElementsByTagName("svg")[0].innerHTML = "";
+    console.log("set " + selectedIndicator);
 }

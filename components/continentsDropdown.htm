@@ -40,7 +40,7 @@
                         for (let i = 0; i < setCountries.length; i++) {
                             if (setCountries[i].includes("(total)")) { // continents
                                 option = document.createElement('option');
-                                option.text = setCountries[i].replace(" (total)", "");
+                                option.text = setCountries[i].replace(" (total)","");
                                 option.value = option.text;
 
                                 if (defaultSelectedText === setCountries[i]) option.selected = "selected";
