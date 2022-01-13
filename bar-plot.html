@@ -43,27 +43,6 @@
   <div class="container-fluid my-5">
     <h1>Bar Plot</h1>
 
-    Region: <select id="continentDropdown" name="locality" onchange="setSelectedContinent(this)">
-    </select> &emsp; &emsp;
-
-    Indicator: <select id="indicatorDropdown" name="locality" onchange="setSelectedIndicator(this)">
-      <option value="cases" selected="selected">Cases</option>
-      <option value="deaths">Deaths</option>
-    </select> &emsp; &emsp;
-
-    Type of processed data: <select id="country-dropdownCount" name="locality" onchange="setSelectedCount(this)">
-      <option value="Normalized">Normalized</option>
-      <option value="Raw count" selected="selected">Raw</option>
-    </select> &emsp; &emsp;
-
-    Year: <select id="yearDropdown" name="locality" onchange="setSelectedYear(this)">
-      <option value="2020">2020</option>
-      <option value="2021" selected="selected">2021</option>
-    </select> &emsp; &emsp;
-
-    Week number: <select id="weekNumDropdown" name="locality" onchange="setSelectedWeekNum(this)">
-    </select> &emsp; &emsp;
-
     <!-- Create a svg where the graph will take place -->
     <svg id="svg-bar-plot"></svg>
 
@@ -87,7 +66,7 @@
 
   <!-- D3js -->
   <script src="https://d3js.org/d3.v6.min.js"></script>
-
+  
 
   <script src="dbp.js"></script>
 
