@@ -55,13 +55,13 @@
         </select> &emsp; &emsp;
 
         Indicator: <select id="indicatorDropdown" name="locality" onchange="setSelectedIndicator(this)">
-            <option value="cases" selected="selected">cases</option>
-            <option value="deaths">deaths</option>
+            <option value="cases" selected="selected">Cases</option>
+            <option value="deaths">Deaths</option>
         </select> &emsp; &emsp;
 
         Type of processed data: <select id="countDropdown" name="locality" onchange="setSelectedCount(this)">
             <option value="Normalized" selected="selected">Normalized</option>
-            <option value="Raw">Raw count</option>
+            <option value="Raw count">Raw</option>
         </select> 
 
         <br />
@@ -70,8 +70,8 @@
         <!-- Create an element where the map will take place -->
         <svg id="my_dataviz" width="600" height="400"></svg>
 
-        <p>Hover the mouse over a country to see more information about it.</p>
-        <p>Click to pan and mouse wheel to zoom.</p>
+        <p>Hover the mouse over a country to see more information about it. Black areas indicate no data available.</p>
+        <p>Drag to pan and mouse wheel to zoom.</p>
 
         <p id="countryCode"></p>
         <p id="country"></p>

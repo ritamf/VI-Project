@@ -7,7 +7,7 @@ dropdownWeekNum.length = 0;
 
 for (let i = 1; i <= 53; i++) {
     option = document.createElement('option');
-    option.text = i; //weekToString(i);
+    option.text = weekToString(i);
     option.value = i;
     if (i == 20) option.selected = "selected"; // default week number is selected here
     dropdownWeekNum.add(option);
@@ -23,8 +23,9 @@ var dropdown_week = +document.getElementById("weekNumDropdown").value; // week 1
 // var dropdown_year = 2021;
 // var dropdown_week = 30;
 
-var max_normalized = 0;
-var max_raw = 0;
+var max_normalized = -1;
+var max_raw = -1;
+var max_str;
 
 // The svg
 var svg = d3.select("svg"),
@@ -143,8 +144,33 @@ function draw(data) {
         .style("text-decoration", "underline")
         .text("Number of " + titleIndicator + " in week " + weekToString(dropdown_week) + " of " + dropdown_year);
 
+    svg.style("background-color", "lightblue");
+
+    // find the maximum for use by the color scale
+    let max_normalized = 0, max_raw = 0;
+    for (let i = 0; i < data.length; i++) {
+        feature = data[i];
+        if (feature.covid != undefined) {
+            if (feature.covid.get(dropdown_indicator).get(dropdown_year).get(dropdown_week) != undefined) {
+                if (dropdown_count == "Normalized") {
+                    console.log(feature.covid.get(dropdown_indicator).get(dropdown_year).get(dropdown_week)[0].normalized);
+                    if (max_normalized < feature.covid.get(dropdown_indicator).get(dropdown_year).get(dropdown_week)[0].normalized) {
+                        max_normalized = feature.covid.get(dropdown_indicator).get(dropdown_year).get(dropdown_week)[0].normalized;
+                        max_str = feature.covid.get(dropdown_indicator).get(dropdown_year).get(dropdown_week)[0].country;
+                    }
+                } else {
+                    if (max_raw < feature.covid.get(dropdown_indicator).get(dropdown_year).get(dropdown_week)[0].weekly_count) {
+                        max_raw = feature.covid.get(dropdown_indicator).get(dropdown_year).get(dropdown_week)[0].weekly_count;
+                        max_str = feature.covid.get(dropdown_indicator).get(dropdown_year).get(dropdown_week)[0].country;
+                    }
+                }
+            }
+        }
+    }
+    console.log(dropdown_count,max_normalized, max_raw, scaleBound(max_raw),max_str);
+
     colorScale
-        .domain([0, dropdown_count == "Raw count"? 100000: 0.01]);
+        .domain([0, dropdown_count == "Raw count"? scaleBound(max_raw): scaleBound(max_normalized)]);
 
     // Draw the map
     svg.append("g")
@@ -265,8 +291,8 @@ function preProcessCovidData(data) {
 
 function weekToString(week_nr) {
     startDayNr = 1 + (week_nr - 1) * 7;
-    startDate = new Date(year, 0, startDayNr);
-    endDate = new Date(year, 0, startDayNr + 6);
+    startDate = new Date(2020, 0, startDayNr);
+    endDate = new Date(2020, 0, startDayNr + 6);
     if (startDate.getFullYear() != endDate.getFullYear()) {
         endDate = new Date(startDate.getYear(), 
                             startDate.getMonth(),
@@ -282,29 +308,42 @@ function weekToString(week_nr) {
 // DROPDOWN  - SET SELECTED FUNCTIONS
 
 function setSelectedCount(dropdown) {
-    dropdown_count = dropdown.options[dropdown.selectedIndex].text;
+    dropdown_count = dropdown.options[dropdown.selectedIndex].value;
     document.getElementsByTagName("svg")[0].innerHTML = "";
     console.log("set " + dropdown_count);
     updateGraph();
 }
 
 function setSelectedIndicator(dropdown) {
-    dropdown_indicator = dropdown.options[dropdown.selectedIndex].text;
+    dropdown_indicator = dropdown.options[dropdown.selectedIndex].value;
     document.getElementsByTagName("svg")[0].innerHTML = "";
     console.log("set " + dropdown_indicator);
     updateGraph();
 }
 
 function setSelectedWeekNum(dropdown) {
-    dropdown_week = +dropdown.options[dropdown.selectedIndex].text;
+    dropdown_week = +dropdown.options[dropdown.selectedIndex].value;
     document.getElementsByTagName("svg")[0].innerHTML = "";
     console.log("set " + dropdown_week);
     updateGraph();
 }
 
 function setSelectedYear(dropdown) {
-    dropdown_year = +dropdown.options[dropdown.selectedIndex].text;
+    dropdown_year = +dropdown.options[dropdown.selectedIndex].value;
     document.getElementsByTagName("svg")[0].innerHTML = "";
     console.log("set " + dropdown_year);
     updateGraph();
+}
+
+function scaleBound(maximum) {
+    let exponentialStr = maximum.toExponential(), 
+        first_nr = Number(exponentialStr.charAt()), 
+        exponent, result;
+        
+    if (exponentialStr.split("+").length != 1) {
+        exponent = Number(exponentialStr.split("+")[1]);
+    } else {
+        exponent = - Number(exponentialStr.split("-")[1]);
+    }
+    return result = (first_nr + 1) * 10 ** exponent;
 }
