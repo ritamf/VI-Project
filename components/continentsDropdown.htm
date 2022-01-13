@@ -9,9 +9,9 @@
 
     <script>
 
-        let dropdown = document.getElementById('country-dropdown');
+        let dropdown = document.getElementById('continentDropdown');
 
-        let defaultSelectedText = "EU/EEA (total)";
+        let defaultSelectedText = "Africa";
 
         const url = '../datasets/cases_deaths/cases_deaths.json';
 
@@ -38,13 +38,13 @@
                         let option;
 
                         for (let i = 0; i < setCountries.length; i++) {
-                            if (!setCountries[i].includes("(total)")) { // countries
+                            if (setCountries[i].includes("(total)")) { // continents
                                 option = document.createElement('option');
                                 option.text = setCountries[i].replace(" (total)", "");
-                                option.value = setCountries[i];
+                                option.value = option.text;
 
                                 if (defaultSelectedText === setCountries[i]) option.selected = "selected";
-
+                                console.log(option.text, option.value);
                                 dropdown.add(option);
 
                             } 

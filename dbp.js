@@ -1,5 +1,9 @@
 // ADD DROPDOWNS
 
+$(function () {
+    $("#continentDropdown").load("components/continentsDropdown.htm");
+});
+
 // note: outros dropdowns tao no bar-plot.html
 
 let dropdownWeekNum = document.getElementById('weekNumDropdown');
@@ -7,17 +11,17 @@ dropdownWeekNum.length = 0;
 
 for (let i = 1; i <= 53; i++) {
     option = document.createElement('option');
-    option.text = "#"+i; //weekToString(i);
+    option.text = i; //weekToString(i);
     option.value = i;
     if (i == 20) option.selected = "selected"; // default week number is selected here
     dropdownWeekNum.add(option);
 }
 
-var dropdown_continent = document.getElementById("continentDropdown").value;
-var dropdown_indicator = document.getElementById("country-dropdownIndicator").value;
-var dropdown_count = document.getElementById("country-dropdownCount").value; // other dropdown option: "Raw count"
-var dropdown_year = document.getElementById("yearDropdown").value;
-var dropdown_week = document.getElementById("weekNumDropdown").value;
+var dropdown_continent = "Africa"//document.getElementById("continentDropdown").value;
+var dropdown_indicator = "cases"//document.getElementById("indicatorDropdown").value;
+var dropdown_count = "Raw"//document.getElementById("country-dropdownCount").value; // other dropdown option: "Raw count"
+var dropdown_year = 2021//document.getElementById("yearDropdown").value;
+var dropdown_week = 20//document.getElementById("weekNumDropdown").value;
 
 // set the dimensions and margins of the graph
 var margin = {top: 20, right: 20, bottom: 140, left: 100},
@@ -149,10 +153,10 @@ function weekToString(week_nr) {
 
 // DROPDOWN  - SET SELECTED FUNCTIONS
 
-function setSelectedCount(dropdown) {
-    selectedCount = dropdown.options[dropdown.selectedIndex].text;
+function setSelectedContinent(dropdown) {
+    selectedContinent = dropdown.options[dropdown.selectedIndex].text;
     document.getElementsByTagName("svg")[0].innerHTML = "";
-    console.log("set " + selectedCount);
+    console.log("set " + selectedContinent);
 }
 
 function setSelectedIndicator(dropdown) {
@@ -161,14 +165,20 @@ function setSelectedIndicator(dropdown) {
     console.log("set " + selectedIndicator);
 }
 
+function setSelectedCount(dropdown) {
+    selectedCount = dropdown.options[dropdown.selectedIndex].text;
+    document.getElementsByTagName("svg")[0].innerHTML = "";
+    console.log("set " + selectedCount);
+}
+
+function setSelectedYear(dropdown) {
+    selectedYear = dropdown.options[dropdown.selectedIndex].text;
+    document.getElementsByTagName("svg")[0].innerHTML = "";
+    console.log("set " + selectedYear);
+}
+
 function setSelectedWeekNum(dropdown) {
     selectedCountry = dropdown.options[dropdown.selectedIndex].text;
     document.getElementsByTagName("svg")[0].innerHTML = "";
     console.log("set " + selectedCountry);
-}
-
-function setSelectedYear(dropdown) {
-    selectedIndicator = dropdown.options[dropdown.selectedIndex].text;
-    document.getElementsByTagName("svg")[0].innerHTML = "";
-    console.log("set " + selectedIndicator);
 }
