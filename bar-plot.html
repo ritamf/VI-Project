@@ -46,7 +46,9 @@
     Region: <select id="continentDropdown" name="locality" onchange="setSelectedContinent(this)">
     </select> &emsp; &emsp;
 
-    Indicator: <select id="country-dropdownIndicator" name="locality" onchange="setSelectedIndicator(this)">
+    Indicator: Indicator: <select id="indicatorDropdown" name="locality" onchange="setSelectedIndicator(this)">
+      <option value="cases" selected="selected">cases</option>
+      <option value="deaths">deaths</option>
     </select> &emsp; &emsp;
 
     Type of processed data: <select id="country-dropdownCount" name="locality" onchange="setSelectedCount(this)">
