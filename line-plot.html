@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <meta name="description" content="" />
+    <meta name="author" content="" />
+    <title>VI Project - Visualize Covid Data</title>
+
+    <link rel="icon" type="image/x-icon" href="assets/covid.ico" /> <!-- Favicon-->
+    <link href="css/styles.css" rel="stylesheet"> <!-- Core theme CSS (includes Bootstrap) -->
+
+    <style>
+        .axis path {
+            fill: none;
+            stroke: black;
+        }
+
+        text {
+            font-size: 10pt;
+            font-family: sans-serif;
+        }
+
+        circle {
+            stroke: black;
+            stroke-width: 0.5px;
+            opacity: 0.4;
+        }
+
+        circle.series2020 {
+            stroke: black;
+            stroke-width: 0.5px;
+            fill: green;
+            opacity: 0.4;
+        }
+
+        circle.series2021 {
+            stroke: black;
+            stroke-width: 0.5px;
+            fill: blue;
+            opacity: 0.4;
+        }
+
+        path {
+            fill: none;
+            stroke: black;
+            stroke-width: 2px;
+        }
+
+        path.line {
+            opacity: 0.9;
+        }
+
+        path.line.series2020 {
+            stroke: green;
+        }
+
+        path.line.series2021 {
+            stroke: blue;
+        }
+    </style>
+</head>
+
+<body class="d-flex flex-column min-vh-100">
+
+    <!-- Responsive navbar-->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container px-5">
+            <a class="navbar-brand" href="index.html"> <img src="assets/covid.ico" width="25" height="25" alt=""> VI
+                Project - Visualize Covid Data</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
+                aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                    <li class="nav-item"><a class="nav-link" aria-current="" href="index.html">Map Plot</a></li>
+                    <li class="nav-item"><a class="nav-link active" aria-current="" href="line-plot.html">Line Plot</a>
+                    </li>
+                    <li class="nav-item"><a class="nav-link" aria-current="" href="bar-plot.html">Bar Plot</a></li>
+                    <li class="nav-item"><a class="nav-link" aria-current="" href="about.html">About</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Page Content (mostly D3js content) -->
+    <div class="container-fluid my-5">
+        <h1>Line Plot</h1>
+        
+        Region: <select id="country-dropdown" name="locality" onchange="setSelectedCountry(this)">
+        </select> &emsp; &emsp;
+
+        Indicator: <select id="country-dropdownIndicator" name="locality" onchange="setSelectedIndicator(this)">
+        </select> &emsp; &emsp;
+        
+        Type of processed data: <select id="country-dropdownCount" name="locality" onchange="setSelectedCount(this)">
+            <option value="Normalized">Normalized</option>
+            <option value="Raw" selected="selected">Raw</option>
+        </select>
+
+        <div class="div-line-plot"></div>
+
+    </div>
+
+    <!-- Footer-->
+    <div class="wrapper flex-grow-1"></div>
+    <footer class="py-5 bg-dark">
+        <div class="container px-4 px-lg-5">
+            <p class="m-0 text-center text-white">Copyright &copy; VI Project - Visualize Covid Data 2021/2022</p>
+        </div>
+    </footer>
+
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script> <!--jQuery-->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script> <!--popper-->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script> <!--Bootstrap core JS-->
+    <script src="http://d3js.org/d3.v6.js"></script> <!--D3js-->
+
+    <script src="line-plot.js"></script> <!--D3js line plot script-->
+
+</body>
+
+</html>

@@ -1,3 +1,0 @@
-## VI-Project
-
-VI-Project

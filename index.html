@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <meta name="description" content="" />
+    <meta name="author" content="" />
+    <title>VI Project - Visualize Covid Data</title>
+
+    <!-- Favicon-->
+    <link rel="icon" type="image/x-icon" href="assets/covid.ico" />
+    <!-- Core theme CSS (includes Bootstrap)-->
+    <link href="css/styles.css" rel="stylesheet" />
+    <style>
+        text {
+            font-size: 10pt;
+            font-family: sans-serif;
+        }
+    </style>
+
+</head>
+
+<body class="d-flex flex-column min-vh-100">
+
+    <!-- Responsive navbar-->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container px-5">
+            <a class="navbar-brand" href="index.html"> <img src="assets/covid.ico" width="25" height="25" alt=""> VI
+                Project - Visualize Covid Data</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
+                aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                    <li class="nav-item"><a class="nav-link active" aria-current="" href="index.html">Map Plot</a></li>
+                    <li class="nav-item"><a class="nav-link" aria-current="" href="line-plot.html">Line Plot</a></li>
+                    <li class="nav-item"><a class="nav-link" aria-current="" href="bar-plot.html">Bar Plot</a></li>
+                    <li class="nav-item"><a class="nav-link" aria-current="" href="about.html">About</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Page Content-->
+    <div class="container-fluid my-5">
+        <h1>Map Plot</h1>
+
+        Year: <select id="yearDropdown" name="locality" onchange="setSelectedYear(this)">
+            <option value="2020">2020</option>
+            <option value="2021" selected="selected">2021</option>
+        </select> &emsp; &emsp;
+ 
+        Week number: <select id="weekNumDropdown" name="locality" onchange="setSelectedWeekNum(this)">
+        </select> &emsp; &emsp;
+
+        Indicator: <select id="indicatorDropdown" name="locality" onchange="setSelectedIndicator(this)">
+            <option value="cases" selected="selected">Cases</option>
+            <option value="deaths">Deaths</option>
+        </select> &emsp; &emsp;
+
+        Type of processed data: <select id="countDropdown" name="locality" onchange="setSelectedCount(this)">
+            <option value="Normalized" selected="selected">Normalized</option>
+            <option value="Raw count">Raw</option>
+        </select> 
+
+        <br />
+        <br />
+
+        <!-- Create an element where the map will take place -->
+        <svg id="my_dataviz" width="600" height="400"></svg>
+
+        <p>Hover the mouse over a country to see more information about it. Black areas indicate no data available.</p>
+        <p>Drag to pan and mouse wheel to zoom.</p>
+
+        <p id="countryCode"></p>
+        <p id="country"></p>
+        <p id="continent"></p>
+        <p id="population"></p>
+    </div>
+
+
+    <!-- Footer-->
+    <div class="wrapper flex-grow-1"></div>
+    <footer class="py-5 bg-dark">
+        <div class="container px-4 px-lg-5">
+            <p class="m-0 text-center text-white">Copyright &copy; VI Project - Visualize Covid Data 2021/2022</p>
+        </div>
+    </footer>
+
+    <!--jQuery-->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+    <!-- Bootstrap core JS-->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Load d3.js -->
+    <script src="http://d3js.org/d3.v6.js"></script>
+
+    <!-- necessary for scale chromatic and projection of map with D3js -->
+    <script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
+    <script src="https://d3js.org/d3-geo-projection.v2.min.js"></script>
+
+
+    <script src="map.js"></script>
+
+</body>
+
+</html>
