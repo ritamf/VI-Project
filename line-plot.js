@@ -56,10 +56,6 @@ fetch(url)
         console.error('Fetch Error -', err);
     });
 
-$(function () {
-    $("#country-dropdownIndicator").load("components/indicatorDropdown.htm");
-});
-
 // ADD INDICATOR DROPDOWN
 
 let dropdownIndicator = document.getElementById('country-dropdownIndicator');
