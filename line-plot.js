@@ -1,4 +1,4 @@
-// ADD ELEMENTS
+// ADD COUNTRIES DROPDOWN
 
 let dropdown = document.getElementById('country-dropdown');
 
@@ -60,7 +60,49 @@ $(function () {
     $("#country-dropdownIndicator").load("components/indicatorDropdown.htm");
 });
 
-// country-dropdownCount is already in line.plot.html
+// ADD INDICATOR DROPDOWN
+
+let dropdownIndicator = document.getElementById('country-dropdownIndicator');
+dropdownIndicator.length = 0;
+
+const urlIndicator = 'datasets/cases_deaths/cases_deaths.json';
+
+fetch(urlIndicator)
+    .then(
+        function (response) {
+            if (response.status !== 200) {
+                console.warn('Looks like there was a problem. Status Code: ' +
+                    response.status);
+                return;
+            }
+
+            // Examine the text in the response  
+            response.json().then(function (data) {
+
+                let indicators = [];
+
+                for (let i = 0; i < data.length; i++) {
+                    indicators.push(data[i].indicator);
+                }
+
+                let setIndicators = Array.from(new Set(indicators));
+
+                let option;
+
+                for (let i = 0; i < setIndicators.length; i++) {
+                    option = document.createElement('option');
+                    option.text = setIndicators[i];
+                    option.value = setIndicators[i];
+                    dropdownIndicator.add(option);
+
+                }
+
+            });
+        }
+    )
+    .catch(function (err) {
+        console.error('Fetch Error -', err);
+    });
 
 
 // INTERACTION
