@@ -1,11 +1,11 @@
 // ADD ELEMENTS
 
 $(function () {
-    $("#country-dropdown").load("./components/countriesDropdown.htm");
+    $("#country-dropdown").load("components/countriesDropdown.htm");
 });
 
 $(function () {
-    $("#country-dropdownIndicator").load("./components/indicatorDropdown.htm");
+    $("#country-dropdownIndicator").load("components/indicatorDropdown.htm");
 });
 
 // country-dropdownCount is already in line.plot.html
