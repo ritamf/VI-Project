@@ -1,8 +1,60 @@
 // ADD ELEMENTS
 
-$(function () {
-    $("#country-dropdown").load("components/countriesDropdown.htm");
-});
+let dropdown = document.getElementById('country-dropdown');
+
+let defaultSelectedText = "Portugal";
+
+const url = 'datasets/cases_deaths/cases_deaths.json';
+
+fetch(url)
+    .then(
+        function (response) {
+            if (response.status !== 200) {
+                console.warn('Looks like there was a problem. Status Code: ' +
+                    response.status);
+                return;
+            }
+
+            // Examine the text in the response  
+            response.json().then(function (data) {
+
+                let countries = [];
+
+                for (let i = 0; i < data.length; i++) {
+                    countries.push(data[i].country);
+                }
+
+                let setCountries = Array.from(new Set(countries));
+
+                let option;
+
+                for (let i = 0; i < setCountries.length; i++) {
+                    if (!setCountries[i].includes("(total)")) { // countries
+                        option = document.createElement('option');
+                        option.text = setCountries[i]
+                        option.value = setCountries[i]
+
+                        if (defaultSelectedText === setCountries[i]) option.selected = "selected";
+
+                        dropdown.add(option);
+
+                    } else { // continents
+                        option = document.createElement('option');
+                        option.text = setCountries[i].replace("total", "total continent");
+                        option.value = option.text;
+
+                        if (defaultSelectedText === setCountries[i]) option.selected = "selected";
+
+                        dropdown.add(option);
+                    }
+                }
+
+            });
+        }
+    )
+    .catch(function (err) {
+        console.error('Fetch Error -', err);
+    });
 
 $(function () {
     $("#country-dropdownIndicator").load("components/indicatorDropdown.htm");
